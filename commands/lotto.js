@@ -68,17 +68,17 @@ module.exports = {
 
 async function 최근회차(interaction) {
     getDrwInfo().then(async drwInfo => {
-        await interaction.reply({ embeds: [new MessageEmbed().setColor('#008000').setTitle(`:slot_machine: ${drwInfo.drwNo}회차(${drwInfo.drwNoDate}) 로또 6/45 당첨번호`).setDescription(`**${drwInfo.drwtNo1} ${drwInfo.drwtNo2} ${drwInfo.drwtNo3} ${drwInfo.drwtNo4} ${drwInfo.drwtNo5} ${drwInfo.drwtNo6} + ${drwInfo.bnusNo}**\n1등 당첨자 수: ${drwInfo.firstPrzwnerCo.toLocaleString('ko-KR')}명\n1등 당첨금: ${drwInfo.firstWinamnt.toLocaleString('ko-KR')}원`)] });
+        await interaction.reply({ embeds: [new MessageEmbed().setColor('#008000').setTitle(`:slot_machine: ${drwInfo.drwNo}회차(${drwInfo.drwNoDate}) 로또 6/45 당첨번호`).setDescription(`**${drwInfo.drwtNo1} ${drwInfo.drwtNo2} ${drwInfo.drwtNo3} ${drwInfo.drwtNo4} ${drwInfo.drwtNo5} ${drwInfo.drwtNo6} + ${drwInfo.bnusNo}**\n\n1등 당첨자 수: ${drwInfo.firstPrzwnerCo.toLocaleString('ko-KR')}명\n1등 당첨금: ${drwInfo.firstWinamnt.toLocaleString('ko-KR')}원`)] });
     }).catch(async () => {
-        await interaction.reply({ embeds: [new MessageEmbed().setColor('#ff0000').setTitle(':warning: 오류').setDescription('아직 추첨이 진행되지 않았습니다.\n정규 추첨 시간: 매주 토요일 오후 8:45분')] });
+        await interaction.reply({ embeds: [new MessageEmbed().setColor('#ff0000').setTitle(':warning: 오류').setDescription('아직 추첨이 진행되지 않았습니다.\n\n정규 추첨 시간: 매주 토요일 오후 8:45분')] });
     });
 }
 
 async function 회차(interaction) {
     getDrwInfo(interaction.options.getNumber('회차')).then(async drwInfo => {
-        await interaction.reply({ embeds: [new MessageEmbed().setColor('#008000').setTitle(`:slot_machine: ${drwInfo.drwNo}회차(${drwInfo.drwNoDate}) 로또 6/45 당첨번호`).setDescription(`**${drwInfo.drwtNo1} ${drwInfo.drwtNo2} ${drwInfo.drwtNo3} ${drwInfo.drwtNo4} ${drwInfo.drwtNo5} ${drwInfo.drwtNo6} + ${drwInfo.bnusNo}**\n1등 당첨자 수: ${drwInfo.firstPrzwnerCo.toLocaleString('ko-KR')}명\n1등 당첨금: ${drwInfo.firstWinamnt.toLocaleString('ko-KR')}원`)] });
+        await interaction.reply({ embeds: [new MessageEmbed().setColor('#008000').setTitle(`:slot_machine: ${drwInfo.drwNo}회차(${drwInfo.drwNoDate}) 로또 6/45 당첨번호`).setDescription(`**${drwInfo.drwtNo1} ${drwInfo.drwtNo2} ${drwInfo.drwtNo3} ${drwInfo.drwtNo4} ${drwInfo.drwtNo5} ${drwInfo.drwtNo6} + ${drwInfo.bnusNo}**\n\n1등 당첨자 수: ${drwInfo.firstPrzwnerCo.toLocaleString('ko-KR')}명\n1등 당첨금: ${drwInfo.firstWinamnt.toLocaleString('ko-KR')}원`)] });
     }).catch(async () => {
-        await interaction.reply({ embeds: [new MessageEmbed().setColor('#ff0000').setTitle(':warning: 오류').setDescription('아직 추첨이 진행되지 않았습니다.\n정규 추첨 시간: 매주 토요일 오후 8:45분')] });
+        await interaction.reply({ embeds: [new MessageEmbed().setColor('#ff0000').setTitle(':warning: 오류').setDescription('아직 추첨이 진행되지 않았습니다.\n\n정규 추첨 시간: 매주 토요일 오후 8:45분')] });
     });
 
 }
