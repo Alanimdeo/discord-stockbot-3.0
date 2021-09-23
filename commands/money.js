@@ -33,10 +33,15 @@ module.exports = {
 };
 
 async function 확인(interaction) {
-    database.query(`SELECT * FROM users WHERE id = ${interaction.member.id}`, async (err, result) => {
+    database.query(`SELECT money, stock FROM users WHERE id = ${interaction.member.id}`, async (err, result) => {
         if (err) console.error(err);
         result = result[0];
-        await interaction.reply({ embeds: [new MessageEmbed().setColor('#ffff00').setTitle(`:moneybag: ${interaction.member.displayName} 님의 돈`).setDescription(`현금: \`${result.money.toLocaleString('ko-KR')}원\`\n주식: \`0원\`\n총액: \`${result.money.toLocaleString('ko-KR')}원\``)] });
+        let stock = JSON.parse(result.stock);
+        let stockMoney = 0;
+        for (var item in stock) {
+            stockMoney += stock[item].buyPrice;
+        }
+        await interaction.reply({ embeds: [new MessageEmbed().setColor('#ffff00').setTitle(`:moneybag: ${interaction.member.displayName} 님의 돈`).setDescription(`현금: \`${result.money.toLocaleString('ko-KR')}원\`\n주식: \`${stockMoney.toLocaleString('ko-KR')}원\`\n총액: \`${(result.money + stockMoney).toLocaleString('ko-KR')}원\``)] });
     });
 }
 
