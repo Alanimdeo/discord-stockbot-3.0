@@ -3,9 +3,7 @@ const { MessageEmbed } = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName("한강")
-        .setDescription("한강 수온을 확인합니다."),
+    data: new SlashCommandBuilder().setName("한강").setDescription("한강 수온을 확인합니다."),
     async execute(interaction) {
         http.get("http://hangang.dkserver.wo.tc", async (resp) => {
             var data = "";
