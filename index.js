@@ -91,7 +91,7 @@ client.on("messageCreate", async (message) => {
     if (message.author.bot || !message.content.toLowerCase().startsWith(config.adminPrefix + "admin") || !config.adminIDs.includes(message.author.id)) return;
     const command = client.adminCommands.get(message.content.split(" ")[1]);
     if (!command) return;
-    await command.execute(message, client.commands);
+    await command.execute(message, client);
 });
 
 console.log("Discord 서버에 로그인 중..");

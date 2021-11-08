@@ -23,7 +23,7 @@ module.exports = {
                     ],
                 });
             } else {
-                var claimedMoney = Math.floor(Math.random() * 30 + 20) * 100;
+                var claimedMoney = Math.floor(Math.random() * 130 + 20) * 100;
                 database.query(
                     `UPDATE users SET money = ${result.money + claimedMoney}, lastClaim = '${now.getFullYear()}-${
                         now.getMonth() + 1
