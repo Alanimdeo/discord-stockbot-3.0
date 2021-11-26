@@ -218,7 +218,9 @@ async function 판매(interaction) {
                 const amountRemaining = userStock[code].amount;
                 if (userStock[code].amount === 0) delete userStock[code];
                 database.query(
-                    `UPDATE users SET money = ${money + price * amount}, stock = '${JSON.stringify(userStock)}' WHERE id = ${interaction.member.id}`,
+                    `UPDATE users SET money = ${money + price * amount - Math.round(price * amount * 0.003)}, stock = '${JSON.stringify(
+                        userStock
+                    )}' WHERE id = ${interaction.member.id}`,
                     async (err) => {
                         if (err) console.error(err);
                         await interaction.reply({
@@ -229,10 +231,15 @@ async function 판매(interaction) {
                                     .setDescription(
                                         `${company}(${code}) 주식을 판매했습니다.\n판매 금액: \`${price.toLocaleString("ko-KR")} × ${amount.toLocaleString(
                                             "ko-KR"
-                                        )} = ${(price * amount).toLocaleString("ko-KR")}원\`\n남은 주식: \`${amountRemaining.toLocaleString(
+                                        )} = ${(price * amount).toLocaleString("ko-KR")}원\`\n세금(0.3%): \`${Math.round(price * amount * 0.003).toLocaleString(
                                             "ko-KR"
-                                        )}주\`\n보유 중인 돈: \`${(money + price * amount).toLocaleString("ko-KR")}원\``
-                                    ),
+                                        )}원\`\n남은 주식: \`${amountRemaining.toLocaleString("ko-KR")}주\`\n보유 중인 돈: \`${(
+                                            money +
+                                            price * amount -
+                                            Math.round(price * amount * 0.003)
+                                        ).toLocaleString("ko-KR")}원\``
+                                    )
+                                    .setFooter("판매 금액은 세금을 미포함한 값입니다."),
                             ],
                         });
                     }
