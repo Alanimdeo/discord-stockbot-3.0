@@ -1,0 +1,13 @@
+{
+    "token": "",
+    "adminPrefix": "=",
+    "adminIDs": ["324101597368156161"],
+    "mysql": {
+        "host": "",
+        "port": 3306,
+        "user": "stockbot",
+        "password": "",
+        "database": "stockbot",
+        "dateStrings": "date"
+    }
+}
