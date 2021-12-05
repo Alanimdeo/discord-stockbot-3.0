@@ -1,38 +1,38 @@
 {
-  "name": "discord-stockbot-3.0",
-  "version": "3.0.0",
-  "description": "Korean stock bot for Discord using virtual money",
-  "main": "index.js",
-  "scripts": {
-    "run": "node index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/alanimdeo/discord-stockbot-3.0.git"
-  },
-  "keywords": [
-    "Discord",
-    "bot",
-    "stock",
-    "korean"
-  ],
-  "author": "Alanimdeo",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/alanimdeo/discord-stockbot-3.0/issues"
-  },
-  "homepage": "https://github.com/alanimdeo/discord-stockbot-3.0#readme",
-  "dependencies": {
-    "@discordjs/builders": "^0.7.0",
-    "@discordjs/rest": "^0.1.0-canary.0",
-    "axios": "^0.23.0",
-    "cheerio": "^1.0.0-rc.10",
-    "discord-api-types": "^0.24.0",
-    "discord.js": "^13.2.0",
-    "download": "^8.0.0",
-    "iconv-lite": "^0.6.3",
-    "mysql": "^2.18.1",
-    "node-html-parser": "^5.0.0",
-    "xlsx": "^0.17.3"
-  }
+    "name": "discord-stockbot-3.0",
+    "version": "3.0.0",
+    "description": "Korean stock bot for Discord using virtual money",
+    "main": "index.js",
+    "scripts": {
+        "start": "supervisor index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/alanimdeo/discord-stockbot-3.0.git"
+    },
+    "keywords": [
+        "Discord",
+        "bot",
+        "stock",
+        "korean"
+    ],
+    "author": "Alanimdeo",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/alanimdeo/discord-stockbot-3.0/issues"
+    },
+    "homepage": "https://github.com/alanimdeo/discord-stockbot-3.0#readme",
+    "dependencies": {
+        "@discordjs/builders": "^0.7.0",
+        "@discordjs/rest": "^0.1.0-canary.0",
+        "axios": "^0.23.0",
+        "cheerio": "^1.0.0-rc.10",
+        "discord-api-types": "^0.24.0",
+        "discord.js": "^13.2.0",
+        "download": "^8.0.0",
+        "iconv-lite": "^0.6.3",
+        "mysql": "^2.18.1",
+        "node-html-parser": "^5.0.0",
+        "xlsx": "^0.17.3"
+    }
 }
