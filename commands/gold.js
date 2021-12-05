@@ -142,7 +142,7 @@ async function 구매(interaction, buyPrice, sellPrice) {
         gold.amount += amount;
         gold.buyPrice += buyPrice * amount;
         database.query(
-            `UPDATE users SET money = ${money}, gold = ${JSON.stringify(gold)} WHERE id = ${interaction.member.id}`,
+            `UPDATE users SET money = ${money}, gold = '${JSON.stringify(gold)}' WHERE id = ${interaction.member.id}`,
             async (err) => {
                 if (err) return console.error(err);
                 return await interaction.editReply({
