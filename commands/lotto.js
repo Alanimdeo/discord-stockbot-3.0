@@ -16,25 +16,43 @@ module.exports = {
             option
                 .setName("회차")
                 .setDescription("회차별 로또 당첨번호를 확인합니다.")
-                .addNumberOption((option) => option.setName("회차").setDescription("확인할 로또 회차를 입력하세요.").setRequired(true))
+                .addNumberOption((option) =>
+                    option.setName("회차").setDescription("확인할 로또 회차를 입력하세요.").setRequired(true)
+                )
         )
-        .addSubcommand((option) => option.setName("최근회차").setDescription("가장 최근에 추첨된 로또 당첨번호를 확인합니다."))
+        .addSubcommand((option) =>
+            option.setName("최근회차").setDescription("가장 최근에 추첨된 로또 당첨번호를 확인합니다.")
+        )
         .addSubcommand((option) => option.setName("확인").setDescription("구매한 로또를 확인합니다."))
         .addSubcommandGroup((option) =>
             option
                 .setName("구매")
-                .setDescription("로또를 구매합니다. 토요일에는 오후 8시까지 구매 가능하며, 다음 회차는 일요일 0시부터 구매 가능합니다.")
+                .setDescription(
+                    "로또를 구매합니다. 토요일에는 오후 8시까지 구매 가능하며, 다음 회차는 일요일 0시부터 구매 가능합니다."
+                )
                 .addSubcommand((option) => option.setName("자동").setDescription("자동으로 로또 번호를 생성합니다."))
                 .addSubcommand((option) =>
                     option
                         .setName("수동")
                         .setDescription("로또 번호를 직접 입력합니다.")
-                        .addIntegerOption((option) => option.setName("번호1").setDescription("첫 번째 번호를 입력하세요.").setRequired(true))
-                        .addIntegerOption((option) => option.setName("번호2").setDescription("두 번째 번호를 입력하세요.").setRequired(true))
-                        .addIntegerOption((option) => option.setName("번호3").setDescription("세 번째 번호를 입력하세요.").setRequired(true))
-                        .addIntegerOption((option) => option.setName("번호4").setDescription("네 번째 번호를 입력하세요.").setRequired(true))
-                        .addIntegerOption((option) => option.setName("번호5").setDescription("다섯 번째 번호를 입력하세요.").setRequired(true))
-                        .addIntegerOption((option) => option.setName("번호6").setDescription("여섯 번째 번호를 입력하세요.").setRequired(true))
+                        .addIntegerOption((option) =>
+                            option.setName("번호1").setDescription("첫 번째 번호를 입력하세요.").setRequired(true)
+                        )
+                        .addIntegerOption((option) =>
+                            option.setName("번호2").setDescription("두 번째 번호를 입력하세요.").setRequired(true)
+                        )
+                        .addIntegerOption((option) =>
+                            option.setName("번호3").setDescription("세 번째 번호를 입력하세요.").setRequired(true)
+                        )
+                        .addIntegerOption((option) =>
+                            option.setName("번호4").setDescription("네 번째 번호를 입력하세요.").setRequired(true)
+                        )
+                        .addIntegerOption((option) =>
+                            option.setName("번호5").setDescription("다섯 번째 번호를 입력하세요.").setRequired(true)
+                        )
+                        .addIntegerOption((option) =>
+                            option.setName("번호6").setDescription("여섯 번째 번호를 입력하세요.").setRequired(true)
+                        )
                 )
         ),
     async execute(interaction) {
@@ -51,11 +69,13 @@ async function 최근회차(interaction) {
                         .setColor("#008000")
                         .setTitle(`:slot_machine: ${drwInfo.drwNo}회차(${drwInfo.drwNoDate}) 로또 6/45 당첨번호`)
                         .setDescription(
-                            `**${drwInfo.drwtNo1} ${drwInfo.drwtNo2} ${drwInfo.drwtNo3} ${drwInfo.drwtNo4} ${drwInfo.drwtNo5} ${drwInfo.drwtNo6} + ${
+                            `**${drwInfo.drwtNo1} ${drwInfo.drwtNo2} ${drwInfo.drwtNo3} ${drwInfo.drwtNo4} ${
+                                drwInfo.drwtNo5
+                            } ${drwInfo.drwtNo6} + ${
                                 drwInfo.bnusNo
-                            }**\n\n1등 당첨자 수: ${drwInfo.firstPrzwnerCo.toLocaleString("ko-KR")}명\n1등 당첨금: ${drwInfo.firstWinamnt.toLocaleString(
+                            }**\n\n1등 당첨자 수: ${drwInfo.firstPrzwnerCo.toLocaleString(
                                 "ko-KR"
-                            )}원`
+                            )}명\n1등 당첨금: ${drwInfo.firstWinamnt.toLocaleString("ko-KR")}원`
                         ),
                 ],
             });
@@ -81,11 +101,13 @@ async function 회차(interaction) {
                         .setColor("#008000")
                         .setTitle(`:slot_machine: ${drwInfo.drwNo}회차(${drwInfo.drwNoDate}) 로또 6/45 당첨번호`)
                         .setDescription(
-                            `**${drwInfo.drwtNo1} ${drwInfo.drwtNo2} ${drwInfo.drwtNo3} ${drwInfo.drwtNo4} ${drwInfo.drwtNo5} ${drwInfo.drwtNo6} + ${
+                            `**${drwInfo.drwtNo1} ${drwInfo.drwtNo2} ${drwInfo.drwtNo3} ${drwInfo.drwtNo4} ${
+                                drwInfo.drwtNo5
+                            } ${drwInfo.drwtNo6} + ${
                                 drwInfo.bnusNo
-                            }**\n\n1등 당첨자 수: ${drwInfo.firstPrzwnerCo.toLocaleString("ko-KR")}명\n1등 당첨금: ${drwInfo.firstWinamnt.toLocaleString(
+                            }**\n\n1등 당첨자 수: ${drwInfo.firstPrzwnerCo.toLocaleString(
                                 "ko-KR"
-                            )}원`
+                            )}명\n1등 당첨금: ${drwInfo.firstWinamnt.toLocaleString("ko-KR")}원`
                         ),
                 ],
             });
@@ -112,7 +134,9 @@ async function 확인(interaction) {
             let money = result[0].money;
             const lottery = JSON.parse(result[0].lottery);
             const currentDrwNo = getCurrentDrwNo();
-            let pendingMessage = [`:information_source: ${interaction.member.displayName} 님이 보유한 로또 목록입니다.`];
+            let pendingMessage = [
+                `:information_source: ${interaction.member.displayName} 님이 보유한 로또 목록입니다.`,
+            ];
             let shouldDelete = [];
             const fetch = lottery.map(async (lotto, index) => {
                 let lottoHead, lottoPrize;
@@ -128,7 +152,9 @@ async function 확인(interaction) {
                         responseType: "arraybuffer",
                         responseEncoding: "binary",
                     });
-                    const parsed = parse(iconv.decode(resp.data.toString("binary"), "euc-kr")).querySelectorAll("td.tar");
+                    const parsed = parse(iconv.decode(resp.data.toString("binary"), "euc-kr")).querySelectorAll(
+                        "td.tar"
+                    );
                     const firstPrize = parsed[1].childNodes.toString();
                     const secondPrize = parsed[3].childNodes.toString();
                     const thirdPrize = parsed[5].childNodes.toString();
@@ -180,12 +206,22 @@ async function 확인(interaction) {
             });
             await Promise.all(deletion);
             const newLottery = lottery.filter(() => true);
-            database.query(`UPDATE users SET lottery = '${JSON.stringify(newLottery)}', money = ${money} WHERE id = ${interaction.member.id}`);
-            console.log(pendingMessage.length);
+            database.query(
+                `UPDATE users SET lottery = '${JSON.stringify(newLottery)}', money = ${money} WHERE id = ${
+                    interaction.member.id
+                }`
+            );
             await interaction.editReply(
                 pendingMessage.length > 1
                     ? pendingMessage.join("")
-                    : { embeds: [new MessageEmbed().setColor("#ff0000").setTitle(":warning: 로또 없음").setDescription("보유한 로또가 없습니다.")] }
+                    : {
+                          embeds: [
+                              new MessageEmbed()
+                                  .setColor("#ff0000")
+                                  .setTitle(":warning: 로또 없음")
+                                  .setDescription("보유한 로또가 없습니다."),
+                          ],
+                      }
             );
         }
     });
@@ -200,7 +236,9 @@ async function 자동(interaction) {
                 new MessageEmbed()
                     .setColor("#ff0000")
                     .setTitle(":warning: 구매 불가")
-                    .setDescription("토요일 로또 구매는 오후 8시까지만 가능합니다.\n다음 회차 로또의 경우 일요일 0시부터 구매 가능합니다."),
+                    .setDescription(
+                        "토요일 로또 구매는 오후 8시까지만 가능합니다.\n다음 회차 로또의 경우 일요일 0시부터 구매 가능합니다."
+                    ),
             ],
         });
         return;
@@ -222,12 +260,19 @@ async function 자동(interaction) {
                         new MessageEmbed()
                             .setColor("#ffff00")
                             .setTitle(":warning: 구매 한도 도달")
-                            .setDescription("회차당 최대 5게임까지 구매 가능합니다.\n\n한국도박문제 관리센터: :telephone: 1336"),
+                            .setDescription(
+                                "회차당 최대 5게임까지 구매 가능합니다.\n\n한국도박문제 관리센터: :telephone: 1336"
+                            ),
                     ],
                 });
             } else if (result[0].money < 1000) {
                 await interaction.editReply({
-                    embeds: [new MessageEmbed().setColor("#ff0000").setTitle(":warning: 잔액 부족").setDescription("가진 돈이 부족합니다.")],
+                    embeds: [
+                        new MessageEmbed()
+                            .setColor("#ff0000")
+                            .setTitle(":warning: 잔액 부족")
+                            .setDescription("가진 돈이 부족합니다."),
+                    ],
                 });
             } else {
                 var numbers = [];
@@ -240,22 +285,29 @@ async function 자동(interaction) {
                 numbers.sort((f, s) => {
                     return f - s;
                 });
-                buyLottery(interaction.member.id, result[0].money - 1000, numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5]).then(
-                    async () => {
-                        await interaction.editReply({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setColor("#008000")
-                                    .setTitle(":white_check_mark: 구매 완료")
-                                    .setDescription(
-                                        `로또를 구매했습니다.\n회차: ${getCurrentDrwNo()}회\n번호: **${numbers[0]} ${numbers[1]} ${numbers[2]} ${numbers[3]} ${
-                                            numbers[4]
-                                        } ${numbers[5]}**`
-                                    ),
-                            ],
-                        });
-                    }
-                );
+                buyLottery(
+                    interaction.member.id,
+                    result[0].money - 1000,
+                    numbers[0],
+                    numbers[1],
+                    numbers[2],
+                    numbers[3],
+                    numbers[4],
+                    numbers[5]
+                ).then(async () => {
+                    await interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setColor("#008000")
+                                .setTitle(":white_check_mark: 구매 완료")
+                                .setDescription(
+                                    `로또를 구매했습니다.\n회차: ${getCurrentDrwNo()}회\n번호: **${numbers[0]} ${
+                                        numbers[1]
+                                    } ${numbers[2]} ${numbers[3]} ${numbers[4]} ${numbers[5]}**`
+                                ),
+                        ],
+                    });
+                });
             }
         }
     });
@@ -280,12 +332,19 @@ async function 수동(interaction) {
                         new MessageEmbed()
                             .setColor("#ffff00")
                             .setTitle(":warning: 구매 한도 도달")
-                            .setDescription("회차당 최대 5게임까지 구매 가능합니다.\n\n한국도박문제 관리센터: :telephone: 1336"),
+                            .setDescription(
+                                "회차당 최대 5게임까지 구매 가능합니다.\n\n한국도박문제 관리센터: :telephone: 1336"
+                            ),
                     ],
                 });
             } else if (result[0].money < 1000) {
                 await interaction.editReply({
-                    embeds: [new MessageEmbed().setColor("#ff0000").setTitle(":warning: 잔액 부족").setDescription("가진 돈이 부족합니다.")],
+                    embeds: [
+                        new MessageEmbed()
+                            .setColor("#ff0000")
+                            .setTitle(":warning: 잔액 부족")
+                            .setDescription("가진 돈이 부족합니다."),
+                    ],
                 });
             } else {
                 var numbers = [
@@ -300,12 +359,22 @@ async function 수동(interaction) {
                     var temp = numbers.shift();
                     if (temp > 45 || temp < 1) {
                         await interaction.editReply({
-                            embeds: [new MessageEmbed().setColor("#ff0000").setTitle(":warning: 오류").setDescription("1에서 45 사이 숫자만 입력 가능합니다.")],
+                            embeds: [
+                                new MessageEmbed()
+                                    .setColor("#ff0000")
+                                    .setTitle(":warning: 오류")
+                                    .setDescription("1에서 45 사이 숫자만 입력 가능합니다."),
+                            ],
                         });
                         return;
                     } else if (numbers.includes(temp)) {
                         await interaction.editReply({
-                            embeds: [new MessageEmbed().setColor("#ff0000").setTitle(":warning: 오류").setDescription("같은 번호를 2개 입력할 수 없습니다.")],
+                            embeds: [
+                                new MessageEmbed()
+                                    .setColor("#ff0000")
+                                    .setTitle(":warning: 오류")
+                                    .setDescription("같은 번호를 2개 입력할 수 없습니다."),
+                            ],
                         });
                         return;
                     } else {
@@ -315,22 +384,29 @@ async function 수동(interaction) {
                 numbers.sort((f, s) => {
                     return f - s;
                 });
-                buyLottery(interaction.member.id, result[0].money - 1000, numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5]).then(
-                    async () => {
-                        await interaction.editReply({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setColor("#008000")
-                                    .setTitle(":white_check_mark: 구매 완료")
-                                    .setDescription(
-                                        `로또를 구매했습니다.\n회차: ${getCurrentDrwNo()}회\n번호: **${numbers[0]} ${numbers[1]} ${numbers[2]} ${numbers[3]} ${
-                                            numbers[4]
-                                        } ${numbers[5]}**`
-                                    ),
-                            ],
-                        });
-                    }
-                );
+                buyLottery(
+                    interaction.member.id,
+                    result[0].money - 1000,
+                    numbers[0],
+                    numbers[1],
+                    numbers[2],
+                    numbers[3],
+                    numbers[4],
+                    numbers[5]
+                ).then(async () => {
+                    await interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setColor("#008000")
+                                .setTitle(":white_check_mark: 구매 완료")
+                                .setDescription(
+                                    `로또를 구매했습니다.\n회차: ${getCurrentDrwNo()}회\n번호: **${numbers[0]} ${
+                                        numbers[1]
+                                    } ${numbers[2]} ${numbers[3]} ${numbers[4]} ${numbers[5]}**`
+                                ),
+                        ],
+                    });
+                });
             }
         }
     });
@@ -349,14 +425,17 @@ function buyLottery(user, money, n1, n2, n3, n4, n5, n6) {
                     drwNo: getCurrentDrwNo(),
                     numbers: [n1, n2, n3, n4, n5, n6],
                 });
-                database.query(`UPDATE users SET lottery = '${JSON.stringify(lottery)}', money = ${money} WHERE id = ${user}`, (err) => {
-                    if (err) {
-                        console.error(err);
-                        reject(new Error(err.message));
-                    } else {
-                        resolve(true);
+                database.query(
+                    `UPDATE users SET lottery = '${JSON.stringify(lottery)}', money = ${money} WHERE id = ${user}`,
+                    (err) => {
+                        if (err) {
+                            console.error(err);
+                            reject(new Error(err.message));
+                        } else {
+                            resolve(true);
+                        }
                     }
-                });
+                );
             });
         } catch (err) {
             console.error(err);

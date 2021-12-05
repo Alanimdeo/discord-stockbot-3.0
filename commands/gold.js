@@ -114,7 +114,6 @@ async function 확인(interaction, buyPrice, sellPrice) {
 }
 
 async function 구매(interaction, buyPrice, sellPrice) {
-    await interaction.deferReply();
     var amount = interaction.options.getInteger("수량");
     if (amount < 1)
         return await interaction.editReply({
@@ -145,7 +144,8 @@ async function 구매(interaction, buyPrice, sellPrice) {
         database.query(
             `UPDATE users SET money = ${money}, gold = ${JSON.stringify(gold)} WHERE id = ${interaction.member.id}`,
             async (err) => {
-                await interaction.editReply({
+                if (err) return console.error(err);
+                return await interaction.editReply({
                     embeds: [
                         new MessageEmbed()
                             .setColor("#008000")

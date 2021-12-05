@@ -10,10 +10,14 @@ module.exports = {
     async execute(interaction) {
         database.query(`SELECT * FROM users WHERE id = ?`, [interaction.member.id], async (err, result) => {
             if (err) console.error(err);
-            console.log(result);
             if (result.length > 0) {
                 await interaction.reply({
-                    embeds: [new MessageEmbed().setColor("#ff0000").setTitle(":warning: 오류").setDescription("이미 가입되어 있습니다.")],
+                    embeds: [
+                        new MessageEmbed()
+                            .setColor("#ff0000")
+                            .setTitle(":warning: 오류")
+                            .setDescription("이미 가입되어 있습니다."),
+                    ],
                 });
             } else {
                 database.query(
@@ -22,7 +26,12 @@ module.exports = {
                     async (err) => {
                         if (err) console.error(err);
                         await interaction.reply({
-                            embeds: [new MessageEmbed().setColor("#008000").setTitle(":white_check_mark: 가입 완료").setDescription("가입이 완료되었습니다.")],
+                            embeds: [
+                                new MessageEmbed()
+                                    .setColor("#008000")
+                                    .setTitle(":white_check_mark: 가입 완료")
+                                    .setDescription("가입이 완료되었습니다."),
+                            ],
                         });
                     }
                 );
