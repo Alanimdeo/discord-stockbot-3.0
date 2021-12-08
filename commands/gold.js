@@ -165,3 +165,56 @@ async function 구매(interaction, buyPrice, sellPrice) {
         );
     });
 }
+
+async function 판매(interaction, buyPrice, sellPrice) {
+    var amount = interaction.options.getInteger("수량");
+    if (amount < 1)
+        return await interaction.editReply({
+            embeds: [
+                new MessageEmbed()
+                    .setColor("#ff0000")
+                    .setTitle(":warning: 오류")
+                    .setDescription("1개 미만은 판매할 수 없습니다."),
+            ],
+        });
+    database.query(`SELECT money, gold FROM users WHERE id = ${interaction.member.id}`, async (err, result) => {
+        if (err) return console.error(err);
+        var money = result[0].money;
+        var gold = JSON.parse(result[0].gold);
+        sellPrice = sellPrice.y;
+        if (amount > gold.amount)
+            return await interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setColor("#ff0000")
+                        .setTitle(":warning: 오류")
+                        .setDescription("가진 것보다 많이 판매할 수 없습니다."),
+                ],
+            });
+        money -= buyPrice * amount;
+        gold.amount += amount;
+        gold.buyPrice += buyPrice * amount;
+        database.query(
+            `UPDATE users SET money = ${money}, gold = '${JSON.stringify(gold)}' WHERE id = ${interaction.member.id}`,
+            async (err) => {
+                if (err) return console.error(err);
+                return await interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setColor("#008000")
+                            .setTitle(":white_check_mark: 구매 완료")
+                            .setDescription(
+                                `금을 구매했습니다.\n구매 금액: \`${buyPrice.toLocaleString(
+                                    "ko-KR"
+                                )} × ${amount.toLocaleString("ko-KR")} = ${(buyPrice * amount).toLocaleString(
+                                    "ko-KR"
+                                )}원\`\n보유 중인 금: \`${gold.amount.toLocaleString(
+                                    "ko-KR"
+                                )}개\`\n남은 돈: \`${money.toLocaleString("ko-KR")}원\``
+                            ),
+                    ],
+                });
+            }
+        );
+    });
+}
