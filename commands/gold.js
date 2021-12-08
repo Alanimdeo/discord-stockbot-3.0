@@ -191,9 +191,10 @@ async function 판매(interaction, buyPrice, sellPrice) {
                         .setDescription("가진 것보다 많이 판매할 수 없습니다."),
                 ],
             });
-        money -= buyPrice * amount;
-        gold.amount += amount;
-        gold.buyPrice += buyPrice * amount;
+        money -= sellPrice * amount;
+        gold.amount -= amount;
+        if (gold.amount == 0) gold.buyPrice = 0;
+        else gold.buyPrice -= sellPrice * amount;
         database.query(
             `UPDATE users SET money = ${money}, gold = '${JSON.stringify(gold)}' WHERE id = ${interaction.member.id}`,
             async (err) => {
@@ -202,13 +203,13 @@ async function 판매(interaction, buyPrice, sellPrice) {
                     embeds: [
                         new MessageEmbed()
                             .setColor("#008000")
-                            .setTitle(":white_check_mark: 구매 완료")
+                            .setTitle(":white_check_mark: 판매 완료")
                             .setDescription(
-                                `금을 구매했습니다.\n구매 금액: \`${buyPrice.toLocaleString(
+                                `금을 판매했습니다.\n판매 금액: \`${sellPrice.toLocaleString(
                                     "ko-KR"
-                                )} × ${amount.toLocaleString("ko-KR")} = ${(buyPrice * amount).toLocaleString(
+                                )} × ${amount.toLocaleString("ko-KR")} = ${(sellPrice * amount).toLocaleString(
                                     "ko-KR"
-                                )}원\`\n보유 중인 금: \`${gold.amount.toLocaleString(
+                                )}원\`\n남은 금: \`${gold.amount.toLocaleString(
                                     "ko-KR"
                                 )}개\`\n남은 돈: \`${money.toLocaleString("ko-KR")}원\``
                             ),
