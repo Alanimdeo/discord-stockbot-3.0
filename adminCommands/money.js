@@ -14,7 +14,7 @@ module.exports = {
 
         database.query(`SELECT money FROM users WHERE id = ${command[1]}`, async (err, result) => {
             if (err) console.error(err);
-            const money = result[0].money;
+            let money = result[0].money;
             switch (command[0]) {
                 case "add":
                     money += Number(command[2]);
