@@ -1,5 +1,5 @@
-const axios = require("axios");
 const mysql = require("mysql");
+const gamble = require("../modules/gamble");
 const { MessageEmbed } = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
@@ -23,6 +23,8 @@ module.exports = {
         ),
     async execute(interaction) {
         await interaction.deferReply();
+        const dailyLimitExceeded = await gamble.checkDailyLimit(interaction.member.id);
+        if (dailyLimitExceeded) return await interaction.editReply(gamble.dailyLimitExceededMessage);
         const random = Math.random() >= 0.5 ? "odd" : "even";
         if (interaction.options.getInteger("금액") < 1)
             return await interaction.editReply({
