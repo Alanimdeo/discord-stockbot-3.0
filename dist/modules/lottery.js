@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addLottery = exports.getCurrentDrwNo = exports.getDrwInfo = exports.DrwInfo = exports.Lottery = void 0;
+exports.addLottery = exports.getDrwNo = exports.getDrwInfo = exports.DrwInfo = exports.Lottery = void 0;
 const axios_1 = __importDefault(require("axios"));
 const database_1 = require("./database");
 class Lottery {
-    constructor(numbers, drwNo = getCurrentDrwNo()) {
+    constructor(numbers, drwNo = getDrwNo()) {
         this.drwNo = drwNo;
         if (numbers) {
             if (numbers.length !== 6) {
@@ -64,7 +64,7 @@ class DrwInfo {
     }
 }
 exports.DrwInfo = DrwInfo;
-async function getDrwInfo(drwNo = getCurrentDrwNo()) {
+async function getDrwInfo(drwNo = getDrwNo()) {
     return new Promise(async (resolve, reject) => {
         const response = await (0, axios_1.default)(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`);
         const drwInfo = response.data;
@@ -77,15 +77,20 @@ async function getDrwInfo(drwNo = getCurrentDrwNo()) {
     });
 }
 exports.getDrwInfo = getDrwInfo;
-function getCurrentDrwNo() {
-    const now = new Date();
-    let drwNo = Number((now.getTime() - 1038582000000) / 604800000);
-    if (now.getDay() === 6 && Number(`${now.getHours()}${now.getMinutes()}`) < 2045) {
+// 가장 최근에 추첨한 로또 번호
+// 토요일은 21시 이후부터 당일 추첨한 회차 반환
+// 로또 구매 등의 기능에서는 +1 해야 함
+function getDrwNo(date = new Date()) {
+    if (typeof date === "string") {
+        date = new Date(date);
+    }
+    let drwNo = Number((date.getTime() - 1038582000000) / 604800000);
+    if (date.getDay() === 6 && date.getHours() < 21) {
         drwNo -= 1;
     }
     return Math.floor(drwNo);
 }
-exports.getCurrentDrwNo = getCurrentDrwNo;
+exports.getDrwNo = getDrwNo;
 function addLottery(userId, lottery) {
     return new Promise((resolve, reject) => {
         (0, database_1.query)(`SELECT lottery FROM users WHERE id = ?`, [userId], (err, result) => {
@@ -96,7 +101,7 @@ function addLottery(userId, lottery) {
                 return reject(new Error("User not found."));
             }
             let lotteries = JSON.parse(result[0].lottery);
-            if (lotteries.filter((lottery) => lottery.drwNo === getCurrentDrwNo()).length > 5) {
+            if (lotteries.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
                 return reject(new Error("Lottery limit exceeded."));
             }
             lotteries.push(lottery);

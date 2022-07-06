@@ -8,3 +8,6 @@ node_modules
 corpList.json
 test.js
 original
+debug.ts
+debug.js
+error.log

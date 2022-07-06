@@ -25,7 +25,7 @@ const adminCommands = fs_1.default
     .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of adminCommands) {
     const command = require(`./adminCommands/${file}`);
-    console.log(`관리자 명령어 불러오는 중... (${command.data.name})`);
+    console.log(`관리자 명령어 불러오는 중... (${command.data.description})`);
     bot.adminCommands.set(command.data.name, command);
 }
 bot.once("ready", async () => {
@@ -36,19 +36,17 @@ bot.once("ready", async () => {
     console.log("상장기업 목록 정리 중...");
     const workbook = xlsx_1.default.read(iconv_lite_1.default.decode(companies, "EUC-KR"), { type: "string" });
     const excel = workbook.Sheets[workbook.SheetNames[0]];
-    // console.log(excel);
-    console.log(excel["!cols"]);
     const corpList = {};
     for (let i = 1; i < Number(excel["!ref"].split("I")[1]) + 1; i++) {
-        corpList[excel["A" + i].v] = excel["B" + i].v.toString().padStart(6, "0");
+        corpList[excel["A" + i].v] = String(excel["B" + i].v).padStart(6, "0");
     }
     delete corpList.회사명;
     console.log(`상장기업 목록 정리 완료! 기업 수: \x1b[32m${Object.keys(corpList).length}\x1b[0m\n상장기업 목록 저장 중..`);
-    fs_1.default.writeFile("./corpList.json", JSON.stringify(corpList, null, 2), "utf-8", (err) => {
-        if (err)
-            console.error(err);
-        console.log("상장기업 목록 저장 완료!\n준비 완료!");
-    });
+    bot.corpList = corpList;
+    if (config_1.default.exportCorpListAsFile) {
+        fs_1.default.writeFileSync("./corpList.json", JSON.stringify(corpList, null, 2), "utf-8");
+    }
+    console.log("상장기업 목록 저장 완료!\n준비 완료!");
 });
 bot.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand())
@@ -57,26 +55,27 @@ bot.on("interactionCreate", async (interaction) => {
         const command = bot.commands.get(interaction.commandName);
         if (!command)
             return;
+        await interaction.deferReply();
         if (await (0, database_1.verifyUser)(interaction.member.id)) {
             await command.execute(interaction, bot);
         }
         else {
-            await interaction.reply({
-                embeds: [
-                    new discord_js_1.MessageEmbed()
-                        .setColor("#ff0000")
-                        .setTitle(":warning: 가입 필요")
-                        .setDescription("가입이 필요합니다. `/가입`을 입력해 가입하세요."),
-                ],
-            });
+            await interaction.editReply((0, types_1.Embed)({
+                color: "#ff0000",
+                icon: "warning",
+                title: "가입 필요",
+                description: "가입이 필요합니다. `/가입`을 입력해 가입하세요.",
+            }));
         }
     }
     catch (err) {
-        await interaction.reply(`오류가 발생했습니다. 오류 로그:\`\`\`${String(err)}\`\`\``);
+        await interaction.editReply(`오류가 발생했습니다. 오류 로그:\`\`\`${String(err)}\`\`\``);
     }
 });
 bot.on("messageCreate", async (message) => {
-    if (!message.content.startsWith(config_1.default.adminPrefix) || !config_1.default.adminIDs.includes(message.author.id))
+    if (message.author.bot ||
+        !message.content.startsWith(config_1.default.adminPrefix) ||
+        !config_1.default.adminIDs.includes(message.author.id))
         return;
     const command = bot.adminCommands.get(message.content.split(" ")[1]);
     if (!command)

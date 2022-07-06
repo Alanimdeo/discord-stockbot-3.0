@@ -1,13 +1,13 @@
 import axios from "axios";
 import { query } from "./database";
 
-type LotteryNumbers = [number, number, number, number, number, number];
+export type LotteryNumbers = [number, number, number, number, number, number];
 
 export class Lottery {
   drwNo: number;
   numbers: LotteryNumbers;
 
-  constructor(numbers?: LotteryNumbers, drwNo: number = getCurrentDrwNo()) {
+  constructor(numbers?: LotteryNumbers, drwNo: number = getDrwNo()) {
     this.drwNo = drwNo;
     if (numbers) {
       if (numbers.length !== 6) {
@@ -71,7 +71,7 @@ export class DrwInfo {
   }
 }
 
-export async function getDrwInfo(drwNo: number = getCurrentDrwNo()): Promise<DrwInfo> {
+export async function getDrwInfo(drwNo: number = getDrwNo()): Promise<DrwInfo> {
   return new Promise(async (resolve, reject) => {
     const response = await axios(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`);
     const drwInfo = response.data;
@@ -83,10 +83,15 @@ export async function getDrwInfo(drwNo: number = getCurrentDrwNo()): Promise<Drw
   });
 }
 
-export function getCurrentDrwNo(): number {
-  const now = new Date();
-  let drwNo = Number((now.getTime() - 1038582000000) / 604800000);
-  if (now.getDay() === 6 && Number(`${now.getHours()}${now.getMinutes()}`) < 2045) {
+// 가장 최근에 추첨한 로또 번호
+// 토요일은 21시 이후부터 당일 추첨한 회차 반환
+// 로또 구매 등의 기능에서는 +1 해야 함
+export function getDrwNo(date: string | Date = new Date()): number {
+  if (typeof date === "string") {
+    date = new Date(date);
+  }
+  let drwNo = Number((date.getTime() - 1038582000000) / 604800000);
+  if (date.getDay() === 6 && date.getHours() < 21) {
     drwNo -= 1;
   }
   return Math.floor(drwNo);
@@ -101,7 +106,7 @@ export function addLottery(userId: string, lottery: Lottery): Promise<Lottery> {
         return reject(new Error("User not found."));
       }
       let lotteries: Lottery[] = JSON.parse(result[0].lottery);
-      if (lotteries.filter((lottery) => lottery.drwNo === getCurrentDrwNo()).length > 5) {
+      if (lotteries.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
         return reject(new Error("Lottery limit exceeded."));
       }
       lotteries.push(lottery);
