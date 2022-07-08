@@ -40,7 +40,7 @@ async function 확인(interaction, bot) {
             icon: "chart_with_upwards_trend",
             title: `${stockInfo.name}(${stockInfo.code})의 현재 주가`,
             description: `\`${stockInfo.price.toLocaleString("ko-KR")}원\``,
-            image: `https://ssl.pstatic.net/imgfinance/chart/item/area/day/${stockInfo.code}.png?sidcode=${new Date().getTime()}`,
+            image: `https://ssl.pstatic.net/imgfinance/chart/item/area/day/${stockInfo.code}.png`,
         }));
     }
     catch (err) {
