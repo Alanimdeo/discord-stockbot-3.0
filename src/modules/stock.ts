@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CorpList } from "../types";
+import { CorpList, NotFoundError, StockFetchFailedError } from "../types";
 
 export interface StockInfo {
   name: string;
@@ -23,13 +23,13 @@ export async function getStockInfo(query: string, corpList: CorpList): Promise<S
       code = query.padStart(6, "0");
       name = Object.keys(corpList)[Object.values(corpList).indexOf(code)];
     } else {
-      return reject(new Error("Result not found."));
+      return reject(new NotFoundError("Result not found."));
     }
     try {
       const response = await axios(`http://api.finance.naver.com/service/itemSummary.nhn?itemcode=${code}`);
       const data = response.data;
       if (response.status !== 200 || !data) {
-        return reject(new Error("Failed to get stock info."));
+        return reject(new StockFetchFailedError("Failed to get stock info."));
       }
       const risefall =
         data.risefall === 1

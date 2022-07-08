@@ -41,12 +41,14 @@ bot.once("ready", async () => {
         corpList[excel["A" + i].v] = String(excel["B" + i].v).padStart(6, "0");
     }
     delete corpList.회사명;
-    console.log(`상장기업 목록 정리 완료! 기업 수: \x1b[32m${Object.keys(corpList).length}\x1b[0m\n상장기업 목록 저장 중..`);
+    console.log(`상장기업 목록 정리 완료! 기업 수: \x1b[32m${Object.keys(corpList).length}\x1b[0m`);
     bot.corpList = corpList;
     if (config_1.default.exportCorpListAsFile) {
+        console.log("상장기업 목록 저장 중..");
         fs_1.default.writeFileSync("./corpList.json", JSON.stringify(corpList, null, 2), "utf-8");
+        console.log("상장기업 목록 저장 완료!");
     }
-    console.log("상장기업 목록 저장 완료!\n준비 완료!");
+    console.log("준비 완료!");
 });
 bot.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand())

@@ -31,10 +31,10 @@ async function getUserdata(userId) {
         (0, exports.query)("SELECT * FROM users WHERE id = ?", [userId], (err, result) => {
             if (err)
                 return reject(err);
-            // else if (result.length === 0) {
-            //   return reject(new Error("User not found."));
-            // }
-            return resolve(new types_1.User(result[0].id, result[0].money, JSON.parse(result[0].stock), JSON.parse(result[0].gold), JSON.parse(result[0].lottery), JSON.parse(result[0].gamble), result[0].lastClaim));
+            else if (result.length === 0) {
+                return reject(new types_1.NotFoundError("User not found."));
+            }
+            return resolve(new types_1.User(result[0].id, result[0].money, new types_1.UserStock(JSON.parse(result[0].stock)), JSON.parse(result[0].gold), JSON.parse(result[0].lottery), JSON.parse(result[0].gamble), result[0].lastClaim));
         });
     });
 }

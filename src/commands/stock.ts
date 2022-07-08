@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, GuildMember } from "discord.js";
+import { getUserdata } from "../modules/database";
 import { getStockInfo } from "../modules/stock";
 import { Bot, Embed, EmbedOption, errorLog } from "../types";
 
@@ -69,12 +70,12 @@ async function 확인(interaction: CommandInteraction, bot: Bot) {
         title: "알 수 없는 오류",
         description: "알 수 없는 오류가 발생했습니다. 개발자에게 문의하세요.",
       };
-      switch (err.message) {
-        case "Result not found.":
+      switch (err.name) {
+        case "NotFound":
           option.title = "검색 결과 없음";
           option.description = "검색 결과가 없습니다. 회사명 또는 종목코드를 올바르게 입력하였는지 확인하세요.";
           break;
-        case "Failed to get stock info.":
+        case "StockFetchFailed":
           option.title = "주식 정보 읽기 실패";
           option.description = "주식 정보를 읽어오는 데 실패했습니다. 서버 문제일 수 있으니 나중에 다시 시도해 보세요.";
           break;
@@ -83,6 +84,49 @@ async function 확인(interaction: CommandInteraction, bot: Bot) {
           console.log(err);
       }
       await interaction.editReply(Embed(option));
+    }
+  }
+}
+
+async function 내주식(interaction: CommandInteraction, bot: Bot) {
+  try {
+    const userdata = await getUserdata(interaction.user.id);
+    if (Object.keys(userdata.stock.status).length === 0) {
+      return await interaction.editReply(
+        Embed({
+          color: "#ff0000",
+          icon: "warning",
+          title: "오류",
+          description: "보유한 주식이 없습니다.",
+        })
+      );
+    }
+    let reply = `:information_source: ${(interaction.member as GuildMember).displayName} 님의 주식 상태입니다.\n`;
+    const codes = Object.keys(userdata.stock.status);
+    codes.sort();
+    for (const code of codes) {
+      const userStock = userdata.stock.status[code];
+      const stockInfo = await getStockInfo(code, bot.corpList);
+      const currentPrice = stockInfo.price * userStock.amount;
+      const avgPrice = userStock.buyPrice / userStock.amount;
+      const plusMinus = currentPrice > userStock.buyPrice ? "+" : currentPrice === userStock.buyPrice ? "=" : "";
+      const prefix = stockInfo.price > avgPrice ? "diff\n-" : stockInfo.price === avgPrice ? "\n*" : "yaml\n=";
+      const benefit = `${plusMinus}${
+        Math.round(((stockInfo.price / avgPrice) * 100 - 100 + Number.EPSILON) * 100) / 100
+      }%, ${plusMinus}${(currentPrice - userStock.buyPrice).toLocaleString("ko-KR")}원`;
+      reply += `\`\`\`${prefix} ${stockInfo.name}(${stockInfo.code}): ${
+        userStock.amount
+      }주, ${currentPrice.toLocaleString("ko-KR")}원 (${
+        currentPrice === userStock.buyPrice ? "=" : benefit
+      })\n  구매 가격 ${userStock.buyPrice.toLocaleString("ko-KR")}원(평균 ${(
+        Math.round((avgPrice + Number.EPSILON) * 100) / 100
+      ).toLocaleString("ko-KR")}원), 현재 1주당 ${stockInfo.price.toLocaleString("ko-KR")}원\`\`\``;
+    }
+    await interaction.editReply(reply);
+  } catch (err) {
+    if (err instanceof Error) {
+      switch (err.name) {
+      }
     }
   }
 }
