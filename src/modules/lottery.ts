@@ -72,15 +72,13 @@ export class DrwInfo {
 }
 
 export async function getDrwInfo(drwNo: number = getDrwNo()): Promise<DrwInfo> {
-  return new Promise(async (resolve, reject) => {
-    const response = await axios(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`);
-    const drwInfo = response.data;
-    if (drwInfo.returnValue === "success") {
-      return resolve(new DrwInfo(drwInfo));
-    } else {
-      return reject(new Error("Failed to get drwInfo"));
-    }
-  });
+  const response = await axios(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`);
+  const drwInfo = response.data;
+  if (drwInfo.returnValue === "success") {
+    return new DrwInfo(drwInfo);
+  } else {
+    throw new Error("Failed to get drwInfo");
+  }
 }
 
 // 가장 최근에 추첨한 로또 번호
@@ -97,7 +95,7 @@ export function getDrwNo(date: string | Date = new Date()): number {
   return Math.floor(drwNo);
 }
 
-export function addLottery(userId: string, lottery: Lottery): Promise<Lottery> {
+export async function addLottery(userId: string, lottery: Lottery): Promise<Lottery> {
   return new Promise((resolve, reject) => {
     query(`SELECT lottery FROM users WHERE id = ?`, [userId], (err, result) => {
       if (err) {

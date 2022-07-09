@@ -5,29 +5,27 @@ const database_1 = require("./database");
 const time_1 = require("./time");
 const types_1 = require("../types");
 async function checkDailyLimit(userId) {
-    return new Promise(async (resolve, reject) => {
-        const gamble = (await (0, database_1.getUserdata)(userId)).gamble;
-        const lastPlayed = new Date(gamble.lastPlayed);
-        const now = new Date();
-        if (lastPlayed.getFullYear() === now.getFullYear() &&
-            lastPlayed.getMonth() === now.getMonth() &&
-            lastPlayed.getDate() === now.getDate()) {
-            if (gamble.count >= 10) {
-                return resolve(false);
-            }
-            else {
-                gamble.count++;
-                (0, database_1.query)(`UPDATE users SET gamble = '${JSON.stringify(gamble)}' WHERE id = ?`, [userId]);
-                return resolve(true);
-            }
+    const gamble = (await (0, database_1.getUserdata)(userId)).gamble;
+    const lastPlayed = new Date(gamble.lastPlayed);
+    const now = new Date();
+    if (lastPlayed.getFullYear() === now.getFullYear() &&
+        lastPlayed.getMonth() === now.getMonth() &&
+        lastPlayed.getDate() === now.getDate()) {
+        if (gamble.count >= 10) {
+            return false;
         }
         else {
-            gamble.lastPlayed = (0, time_1.toDateString)(now);
-            gamble.count = 1;
+            gamble.count++;
             (0, database_1.query)(`UPDATE users SET gamble = '${JSON.stringify(gamble)}' WHERE id = ?`, [userId]);
-            return resolve(true);
+            return true;
         }
-    });
+    }
+    else {
+        gamble.lastPlayed = (0, time_1.toDateString)(now);
+        gamble.count = 1;
+        (0, database_1.query)(`UPDATE users SET gamble = '${JSON.stringify(gamble)}' WHERE id = ?`, [userId]);
+        return true;
+    }
 }
 exports.checkDailyLimit = checkDailyLimit;
 exports.dailyLimitExceededEmbed = (0, types_1.Embed)({

@@ -1,8 +1,10 @@
 import { Client, ClientOptions, Collection, ColorResolvable, EmbedFooterData, MessageEmbed } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "@discordjs/builders";
 import { getToday, getYesterday } from "../modules/time";
 import { Lottery } from "../modules/lottery";
-import { NegativeNumberError, NotFoundError } from "./error";
+import { UserStock } from "../modules/stock";
+import { Money } from "../modules/money";
+import { Gold } from "../modules/gold";
 
 export class Bot extends Client {
   commands: Collection<string, Command>;
@@ -22,102 +24,45 @@ export interface CorpList {
 }
 
 export class Command {
-  data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">;
+  data: CommandData;
   execute: Function;
 
-  constructor(data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">, execute: Function) {
+  constructor(data: CommandData, execute: Function) {
     this.data = data;
     this.execute = execute;
   }
 }
 
+export type CommandData =
+  | Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">
+  | SlashCommandSubcommandsOnlyBuilder;
+
 export class User {
   id: string;
-  money: number;
+  money: Money;
   stock: UserStock;
-  gold: Asset;
+  gold: Gold;
   lottery: Lottery[];
   gamble: GambleInfo;
   lastClaim: string;
 
   constructor(
     id: string,
-    money?: number,
+    money?: Money,
     stock?: UserStock,
-    gold?: Asset,
+    gold?: Gold,
     lottery?: Lottery[],
     gamble?: GambleInfo,
     lastClaim?: string
   ) {
     this.id = id;
-    this.money = money || 1_000_000;
-    this.stock = stock || new UserStock();
-    this.gold = gold || { amount: 0, buyPrice: 0 };
+    this.money = money || new Money(id);
+    this.stock = stock || new UserStock(id);
+    this.gold = gold || new Gold(id);
     this.lottery = lottery || [];
     this.gamble = gamble || { count: 0, lastPlayed: getToday() };
     this.lastClaim = lastClaim || getYesterday();
   }
-}
-
-export class UserStock {
-  status: UserStockStatus;
-  setStock(code: string, amount: number, buyPrice?: number): UserStock {
-    if (amount < 0 || (buyPrice && buyPrice < 0)) {
-      throw new NegativeNumberError("The amount or buyPrice of stock cannot be negative.");
-    } else if (amount === 0) {
-      console.log("If you want to remove stock, use removeStock instead.");
-      return this.removeStock(code);
-    }
-    this.status[code] = {
-      amount,
-      buyPrice: buyPrice || 1, // 0으로 하면 내주식 명령어 사용 시 수익률이 무한대가 됨
-    };
-    return this;
-  }
-  addStock(code: string, amount: number, price: number): UserStock {
-    if (amount < 0 || price < 0) {
-      throw new NegativeNumberError(
-        "Adding negative number using addStock can cause error because it doesn't check if the amount is 0. Use reduceStock or setStock or removeStock instead."
-      );
-    }
-    if (!this.status[code]) {
-      this.status[code] = {
-        amount,
-        buyPrice: price * amount,
-      };
-    } else {
-      this.status[code].amount += amount;
-      this.status[code].buyPrice += price * amount;
-    }
-    return this;
-  }
-  reduceStock(code: string, amount: number, price: number): UserStock {
-    if (amount < 0 || price < 0) {
-      throw new NegativeNumberError(
-        "Reducing the amount of stock using reduceStock is not recommmended. use addStock instead."
-      );
-    } else if (!this.status[code]) {
-      throw new NotFoundError("The user does not have this stock.");
-    }
-    this.status[code].amount -= amount;
-    this.status[code].buyPrice -= price * amount;
-    return this;
-  }
-  removeStock(code: string): UserStock {
-    if (!this.status[code]) {
-      throw new NotFoundError("The user does not have this stock.");
-    }
-    delete this.status[code];
-    return this;
-  }
-
-  constructor(status: UserStockStatus = {}) {
-    this.status = status;
-  }
-}
-
-export interface UserStockStatus {
-  [code: string]: Asset;
 }
 
 export interface Asset {

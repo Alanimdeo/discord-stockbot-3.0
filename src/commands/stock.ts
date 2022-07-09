@@ -2,10 +2,10 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildMember } from "discord.js";
 import { getUserdata } from "../modules/database";
 import { getStockInfo } from "../modules/stock";
-import { Bot, Embed, EmbedOption, errorLog } from "../types";
+import { Bot, Command, Embed, EmbedOption, errorLog } from "../types";
 
-module.exports = {
-  data: new SlashCommandBuilder()
+module.exports = new Command(
+  new SlashCommandBuilder()
     .setName("주식")
     .setDescription("주식 관련 명령어")
     .addSubcommand((command) =>
@@ -45,10 +45,10 @@ module.exports = {
             .setRequired(true)
         )
     ),
-  execute: async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: CommandInteraction, bot: Bot) => {
     return await eval(`${interaction.options.getSubcommand()}(interaction, bot)`);
-  },
-};
+  }
+);
 
 async function 확인(interaction: CommandInteraction, bot: Bot) {
   try {
@@ -63,28 +63,7 @@ async function 확인(interaction: CommandInteraction, bot: Bot) {
       })
     );
   } catch (err) {
-    if (err instanceof Error) {
-      const option: EmbedOption = {
-        color: "#ff0000",
-        icon: "warning",
-        title: "알 수 없는 오류",
-        description: "알 수 없는 오류가 발생했습니다. 개발자에게 문의하세요.",
-      };
-      switch (err.name) {
-        case "NotFound":
-          option.title = "검색 결과 없음";
-          option.description = "검색 결과가 없습니다. 회사명 또는 종목코드를 올바르게 입력하였는지 확인하세요.";
-          break;
-        case "StockFetchFailed":
-          option.title = "주식 정보 읽기 실패";
-          option.description = "주식 정보를 읽어오는 데 실패했습니다. 서버 문제일 수 있으니 나중에 다시 시도해 보세요.";
-          break;
-        default:
-          errorLog(err, "commands/stock");
-          console.log(err);
-      }
-      await interaction.editReply(Embed(option));
-    }
+    await interaction.editReply(Embed(handleError(err)));
   }
 }
 
@@ -124,9 +103,118 @@ async function 내주식(interaction: CommandInteraction, bot: Bot) {
     }
     await interaction.editReply(reply);
   } catch (err) {
-    if (err instanceof Error) {
-      switch (err.name) {
-      }
-    }
+    await interaction.editReply(Embed(handleError(err)));
   }
+}
+
+async function 구매(interaction: CommandInteraction, bot: Bot) {
+  try {
+    const corpName = interaction.options.getString("회사명")!;
+    let amount = interaction.options.getInteger("수량")!;
+    const userdata = await getUserdata(interaction.user.id);
+    const stockInfo = await getStockInfo(corpName, bot.corpList);
+    if (amount < 1) {
+      amount = Math.floor(userdata.money.amount / stockInfo.price);
+    }
+    if (amount < 1 || userdata.money.amount < stockInfo.price * amount) {
+      return await interaction.editReply(
+        Embed({
+          color: "#ff0000",
+          icon: "warning",
+          title: "오류",
+          description: "돈이 부족합니다.",
+        })
+      );
+    }
+    await userdata.money.reduceMoney(stockInfo.price * amount);
+    await userdata.stock.addStock(stockInfo.code, amount, stockInfo.price);
+    await interaction.editReply(
+      Embed({
+        color: "#008000",
+        icon: "white_check_mark",
+        title: "주식 구매 완료",
+        description: `${stockInfo.name}(${stockInfo.code}) ${amount.toLocaleString(
+          "ko-KR"
+        )}주를 구매했습니다.\n구매 금액: \`${stockInfo.price.toLocaleString("ko-KR")} × ${amount.toLocaleString(
+          "ko-KR"
+        )} = ${(stockInfo.price * amount).toLocaleString("ko-KR")}원\`\n보유 중인 주식: \`${userdata.stock.status[
+          stockInfo.code
+        ].amount.toLocaleString("ko-KR")}주\`\n남은 돈: \`${userdata.money.amount.toLocaleString("ko-KR")}원\``,
+      })
+    );
+  } catch (err) {
+    await interaction.editReply(Embed(handleError(err)));
+  }
+}
+
+async function 판매(interaction: CommandInteraction, bot: Bot) {
+  try {
+    const corpName = interaction.options.getString("회사명")!;
+    let amount = interaction.options.getInteger("수량")!;
+    const userdata = await getUserdata(interaction.user.id);
+    const stockInfo = await getStockInfo(corpName, bot.corpList);
+    if (!userdata.stock.status[stockInfo.code]) {
+      return await interaction.editReply(
+        Embed({
+          color: "#ff0000",
+          icon: "warning",
+          title: "오류",
+          description: "보유한 주식이 없습니다.",
+        })
+      );
+    }
+    if (amount < 1 || amount > userdata.stock.status[stockInfo.code].amount) {
+      amount = userdata.stock.status[stockInfo.code].amount;
+    }
+    const fee = Math.round(stockInfo.price * amount * 0.003);
+    await userdata.money.addMoney(stockInfo.price * amount - fee);
+    await userdata.stock.reduceStock(stockInfo.code, amount, stockInfo.price);
+    const noStockRemain = !userdata.stock.status[stockInfo.code];
+    await interaction.editReply(
+      Embed({
+        color: "#008000",
+        icon: "white_check_mark",
+        title: "주식 판매 완료",
+        description: `${stockInfo.name}(${stockInfo.code}) ${amount.toLocaleString(
+          "ko-KR"
+        )}주를 판매했습니다.\n판매 금액: \`${stockInfo.price.toLocaleString("ko-KR")} × ${amount.toLocaleString(
+          "ko-KR"
+        )} = ${(stockInfo.price * amount).toLocaleString("ko-KR")}원\`\n세금 및 수수료(0.3%): \`${fee.toLocaleString(
+          "ko-KR"
+        )}원\`\n실 수령액: \`${(stockInfo.price * amount - fee).toLocaleString("ko-KR")}원\`\n보유 중인 주식: \`${
+          noStockRemain ? "0" : userdata.stock.status[stockInfo.code].amount.toLocaleString("ko-KR")
+        }주\`\n남은 돈: \`${userdata.money.amount.toLocaleString("ko-KR")}원\``,
+      })
+    );
+  } catch (err) {
+    await interaction.editReply(Embed(handleError(err)));
+  }
+}
+
+function handleError(err: unknown): EmbedOption {
+  const option: EmbedOption = {
+    color: "#ff0000",
+    icon: "warning",
+    title: "알 수 없는 오류",
+    description: "알 수 없는 오류가 발생했습니다. 개발자에게 문의하세요.",
+  };
+  if (err instanceof Error) {
+    switch (err.name) {
+      case "NotFound":
+        option.title = "검색 결과 없음";
+        option.description = "검색 결과가 없습니다. 회사명 또는 종목코드를 올바르게 입력하였는지 확인하세요.";
+        break;
+      case "StockFetchFailed":
+        option.title = "주식 정보 읽기 실패";
+        option.description = "주식 정보를 읽어오는 데 실패했습니다. 서버 문제일 수 있으니 나중에 다시 시도해 보세요.";
+        break;
+      default:
+        errorLog(err, "commands/stock");
+        console.error(err);
+    }
+  } else {
+    errorLog(err, "commands/stock");
+    console.error(err);
+  }
+  return option;
 }

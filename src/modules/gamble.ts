@@ -1,32 +1,29 @@
 import { getUserdata, query } from "./database";
 import { toDateString } from "./time";
-import { MessageEmbed } from "discord.js";
 import { Embed } from "../types";
 
 export async function checkDailyLimit(userId: string): Promise<boolean> {
-  return new Promise(async (resolve, reject) => {
-    const gamble = (await getUserdata(userId)).gamble;
-    const lastPlayed = new Date(gamble.lastPlayed);
-    const now = new Date();
-    if (
-      lastPlayed.getFullYear() === now.getFullYear() &&
-      lastPlayed.getMonth() === now.getMonth() &&
-      lastPlayed.getDate() === now.getDate()
-    ) {
-      if (gamble.count >= 10) {
-        return resolve(false);
-      } else {
-        gamble.count++;
-        query(`UPDATE users SET gamble = '${JSON.stringify(gamble)}' WHERE id = ?`, [userId]);
-        return resolve(true);
-      }
+  const gamble = (await getUserdata(userId)).gamble;
+  const lastPlayed = new Date(gamble.lastPlayed);
+  const now = new Date();
+  if (
+    lastPlayed.getFullYear() === now.getFullYear() &&
+    lastPlayed.getMonth() === now.getMonth() &&
+    lastPlayed.getDate() === now.getDate()
+  ) {
+    if (gamble.count >= 10) {
+      return false;
     } else {
-      gamble.lastPlayed = toDateString(now);
-      gamble.count = 1;
+      gamble.count++;
       query(`UPDATE users SET gamble = '${JSON.stringify(gamble)}' WHERE id = ?`, [userId]);
-      return resolve(true);
+      return true;
     }
-  });
+  } else {
+    gamble.lastPlayed = toDateString(now);
+    gamble.count = 1;
+    query(`UPDATE users SET gamble = '${JSON.stringify(gamble)}' WHERE id = ?`, [userId]);
+    return true;
+  }
 }
 
 export const dailyLimitExceededEmbed = Embed({
