@@ -1,11 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StockFetchFailedError = exports.NotFoundError = exports.errorLog = exports.Embed = exports.User = exports.Command = exports.Bot = void 0;
+exports.StockFetchFailedError = exports.NotFoundError = exports.errorLog = exports.User = exports.Embed = exports.Command = exports.Bot = void 0;
 const discord_js_1 = require("discord.js");
-const time_1 = require("../modules/time");
-const stock_1 = require("../modules/stock");
-const money_1 = require("../modules/money");
-const gold_1 = require("../modules/gold");
 class Bot extends discord_js_1.Client {
     constructor(options) {
         super(options);
@@ -22,18 +18,6 @@ class Command {
     }
 }
 exports.Command = Command;
-class User {
-    constructor(id, money, stock, gold, lottery, gamble, lastClaim) {
-        this.id = id;
-        this.money = money || new money_1.Money(id);
-        this.stock = stock || new stock_1.UserStock(id);
-        this.gold = gold || new gold_1.Gold(id);
-        this.lottery = lottery || [];
-        this.gamble = gamble || { count: 0, lastPlayed: (0, time_1.getToday)() };
-        this.lastClaim = lastClaim || (0, time_1.getYesterday)();
-    }
-}
-exports.User = User;
 function Embed(option) {
     const embed = new discord_js_1.MessageEmbed();
     embed.setColor(option.color);
@@ -50,6 +34,8 @@ function Embed(option) {
     };
 }
 exports.Embed = Embed;
+var user_1 = require("./user");
+Object.defineProperty(exports, "User", { enumerable: true, get: function () { return user_1.User; } });
 var error_1 = require("./error");
 Object.defineProperty(exports, "errorLog", { enumerable: true, get: function () { return error_1.errorLog; } });
 Object.defineProperty(exports, "NotFoundError", { enumerable: true, get: function () { return error_1.NotFoundError; } });

@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGoldPrice = exports.Gold = void 0;
 const axios_1 = __importDefault(require("axios"));
 class Gold {
-    constructor(userId, amount, buyPrice) {
-        this.userId = userId;
+    constructor(user, amount, buyPrice) {
+        this.user = user;
         this.amount = amount || 0;
         this.buyPrice = buyPrice || 0;
     }

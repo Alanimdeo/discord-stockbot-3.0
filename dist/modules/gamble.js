@@ -1,29 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dailyLimitExceededEmbed = exports.checkDailyLimit = void 0;
-const database_1 = require("./database");
 const time_1 = require("./time");
 const types_1 = require("../types");
-async function checkDailyLimit(userId) {
-    const gamble = (await (0, database_1.getUserdata)(userId)).gamble;
-    const lastPlayed = new Date(gamble.lastPlayed);
+async function checkDailyLimit(user) {
+    const lastPlayed = new Date(user.gamble.lastPlayed);
     const now = new Date();
-    if (lastPlayed.getFullYear() === now.getFullYear() &&
-        lastPlayed.getMonth() === now.getMonth() &&
-        lastPlayed.getDate() === now.getDate()) {
-        if (gamble.count >= 10) {
+    if ((0, time_1.isToday)(lastPlayed)) {
+        if (user.gamble.count >= 10) {
             return false;
         }
         else {
-            gamble.count++;
-            (0, database_1.query)(`UPDATE users SET gamble = '${JSON.stringify(gamble)}' WHERE id = ?`, [userId]);
+            user.gamble.count++;
+            await user.update([{ key: "gamble", value: JSON.stringify(user.gamble) }]);
             return true;
         }
     }
     else {
-        gamble.lastPlayed = (0, time_1.toDateString)(now);
-        gamble.count = 1;
-        (0, database_1.query)(`UPDATE users SET gamble = '${JSON.stringify(gamble)}' WHERE id = ?`, [userId]);
+        user.gamble.lastPlayed = (0, time_1.toDateString)(now);
+        user.gamble.count = 1;
+        await user.update([{ key: "gamble", value: JSON.stringify(user.gamble) }]);
         return true;
     }
 }

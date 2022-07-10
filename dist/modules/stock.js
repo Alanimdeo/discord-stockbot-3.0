@@ -7,10 +7,9 @@ exports.getStockInfo = exports.UserStock = void 0;
 const axios_1 = __importDefault(require("axios"));
 const types_1 = require("../types");
 const error_1 = require("../types/error");
-const database_1 = require("./database");
 class UserStock {
-    constructor(userId, status = {}) {
-        this.userId = userId;
+    constructor(user, status = {}) {
+        this.user = user;
         this.status = status;
     }
     async setStock(code, amount, buyPrice) {
@@ -25,7 +24,7 @@ class UserStock {
             amount,
             buyPrice: buyPrice || 1, // 0으로 하면 내주식 명령어 사용 시 수익률이 무한대가 됨
         };
-        await updateStock(this.userId, this.status);
+        await updateStock(this.user, this.status);
         return this;
     }
     async addStock(code, amount, price) {
@@ -42,7 +41,7 @@ class UserStock {
             this.status[code].amount += amount;
             this.status[code].buyPrice += price * amount;
         }
-        await updateStock(this.userId, this.status);
+        await updateStock(this.user, this.status);
         return this;
     }
     async reduceStock(code, amount, price) {
@@ -61,7 +60,7 @@ class UserStock {
         else {
             this.status[code].amount -= amount;
             this.status[code].buyPrice -= price * amount;
-            await updateStock(this.userId, this.status);
+            await updateStock(this.user, this.status);
             return this;
         }
     }
@@ -70,12 +69,12 @@ class UserStock {
             throw new types_1.NotFoundError("The user does not have this stock.");
         }
         delete this.status[code];
-        await updateStock(this.userId, this.status);
+        await updateStock(this.user, this.status);
         return this;
     }
 }
 exports.UserStock = UserStock;
-const updateStock = async (id, stock) => await (0, database_1.updateUserdata)(id, [{ key: "stock", value: JSON.stringify(stock) }]);
+const updateStock = async (user, stock) => await user.update([{ key: "stock", value: JSON.stringify(stock) }]);
 async function getStockInfo(query, corpList) {
     let code = "", name = "";
     if (isNaN(Number(query)) && Object.keys(corpList).includes(query)) {

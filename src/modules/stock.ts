@@ -1,10 +1,9 @@
 import axios from "axios";
-import { Asset, CorpList, NotFoundError, StockFetchFailedError } from "../types";
+import { Asset, CorpList, NotFoundError, StockFetchFailedError, User } from "../types";
 import { NegativeNumberError } from "../types/error";
-import { updateUserdata } from "./database";
 
 export class UserStock {
-  userId: string;
+  user: User;
   status: UserStockStatus;
   async setStock(code: string, amount: number, buyPrice?: number): Promise<UserStock> {
     if (amount < 0 || (buyPrice && buyPrice < 0)) {
@@ -17,7 +16,7 @@ export class UserStock {
       amount,
       buyPrice: buyPrice || 1, // 0으로 하면 내주식 명령어 사용 시 수익률이 무한대가 됨
     };
-    await updateStock(this.userId, this.status);
+    await updateStock(this.user, this.status);
     return this;
   }
   async addStock(code: string, amount: number, price: number): Promise<UserStock> {
@@ -35,7 +34,7 @@ export class UserStock {
       this.status[code].amount += amount;
       this.status[code].buyPrice += price * amount;
     }
-    await updateStock(this.userId, this.status);
+    await updateStock(this.user, this.status);
     return this;
   }
   async reduceStock(code: string, amount: number, price: number): Promise<UserStock> {
@@ -53,7 +52,7 @@ export class UserStock {
     } else {
       this.status[code].amount -= amount;
       this.status[code].buyPrice -= price * amount;
-      await updateStock(this.userId, this.status);
+      await updateStock(this.user, this.status);
       return this;
     }
   }
@@ -62,18 +61,18 @@ export class UserStock {
       throw new NotFoundError("The user does not have this stock.");
     }
     delete this.status[code];
-    await updateStock(this.userId, this.status);
+    await updateStock(this.user, this.status);
     return this;
   }
 
-  constructor(userId: string, status: UserStockStatus = {}) {
-    this.userId = userId;
+  constructor(user: User, status: UserStockStatus = {}) {
+    this.user = user;
     this.status = status;
   }
 }
 
-const updateStock = async (id: string, stock: UserStockStatus) =>
-  await updateUserdata(id, [{ key: "stock", value: JSON.stringify(stock) }]);
+const updateStock = async (user: User, stock: UserStockStatus) =>
+  await user.update([{ key: "stock", value: JSON.stringify(stock) }]);
 
 export interface UserStockStatus {
   [code: string]: Asset;

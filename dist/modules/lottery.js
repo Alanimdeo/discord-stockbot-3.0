@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addLottery = exports.getDrwNo = exports.getDrwInfo = exports.DrwInfo = exports.Lottery = void 0;
 const axios_1 = __importDefault(require("axios"));
-const database_1 = require("./database");
 class Lottery {
     constructor(numbers, drwNo = getDrwNo()) {
         this.drwNo = drwNo;
@@ -89,29 +88,17 @@ function getDrwNo(date = new Date()) {
     return Math.floor(drwNo);
 }
 exports.getDrwNo = getDrwNo;
-async function addLottery(userId, lottery) {
-    return new Promise((resolve, reject) => {
-        (0, database_1.query)(`SELECT lottery FROM users WHERE id = ?`, [userId], (err, result) => {
-            if (err) {
-                return reject(err);
-            }
-            else if (result.length === 0) {
-                return reject(new Error("User not found."));
-            }
-            let lotteries = JSON.parse(result[0].lottery);
-            if (lotteries.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
-                return reject(new Error("Lottery limit exceeded."));
-            }
-            lotteries.push(lottery);
-            (0, database_1.query)(`UPDATE users SET lottery = '${JSON.stringify(lotteries)}' WHERE id = ?`, [userId], (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                else {
-                    return resolve(lottery);
-                }
-            });
-        });
-    });
+async function addLottery(user, lottery) {
+    try {
+        if (user.lottery.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
+            throw new Error("Lottery limit exceeded.");
+        }
+        user.lottery.push(lottery);
+        await user.update([{ key: "lottery", value: JSON.stringify(user.lottery) }]);
+        return user.lottery;
+    }
+    catch (err) {
+        throw err;
+    }
 }
 exports.addLottery = addLottery;

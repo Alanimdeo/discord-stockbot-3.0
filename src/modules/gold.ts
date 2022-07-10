@@ -1,8 +1,8 @@
 import axios from "axios";
-import { Asset } from "../types";
+import { Asset, User } from "../types";
 
 export class Gold implements Asset {
-  userId: string;
+  user: User;
   amount: number;
   buyPrice: number;
   async setGold(amount: number) {}
@@ -10,8 +10,8 @@ export class Gold implements Asset {
   async reduceGold(amount: number) {}
   async removeGold(amount: number) {}
 
-  constructor(userId: string, amount?: number, buyPrice?: number) {
-    this.userId = userId;
+  constructor(user: User, amount?: number, buyPrice?: number) {
+    this.user = user;
     this.amount = amount || 0;
     this.buyPrice = buyPrice || 0;
   }

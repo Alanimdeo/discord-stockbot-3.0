@@ -1,5 +1,5 @@
 import axios from "axios";
-import { query } from "./database";
+import { User } from "../types";
 
 export type LotteryNumbers = [number, number, number, number, number, number];
 
@@ -95,26 +95,15 @@ export function getDrwNo(date: string | Date = new Date()): number {
   return Math.floor(drwNo);
 }
 
-export async function addLottery(userId: string, lottery: Lottery): Promise<Lottery> {
-  return new Promise((resolve, reject) => {
-    query(`SELECT lottery FROM users WHERE id = ?`, [userId], (err, result) => {
-      if (err) {
-        return reject(err);
-      } else if (result.length === 0) {
-        return reject(new Error("User not found."));
-      }
-      let lotteries: Lottery[] = JSON.parse(result[0].lottery);
-      if (lotteries.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
-        return reject(new Error("Lottery limit exceeded."));
-      }
-      lotteries.push(lottery);
-      query(`UPDATE users SET lottery = '${JSON.stringify(lotteries)}' WHERE id = ?`, [userId], (err) => {
-        if (err) {
-          return reject(err);
-        } else {
-          return resolve(lottery);
-        }
-      });
-    });
-  });
+export async function addLottery(user: User, lottery: Lottery): Promise<Lottery[]> {
+  try {
+    if (user.lottery.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
+      throw new Error("Lottery limit exceeded.");
+    }
+    user.lottery.push(lottery);
+    await user.update([{ key: "lottery", value: JSON.stringify(user.lottery) }]);
+    return user.lottery;
+  } catch (err) {
+    throw err;
+  }
 }

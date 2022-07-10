@@ -1,16 +1,13 @@
+import { SlashCommandBuilder } from "@discordjs/builders";
 import { ApplicationCommandDataResolvable, Message } from "discord.js";
-import { Bot } from "../types";
+import { Bot, Command } from "../types";
 
-module.exports = {
-  data: {
-    name: "deploy",
-    description: "설치",
-  },
-  async execute(message: Message, bot: Bot) {
+module.exports = new Command(
+  new SlashCommandBuilder().setName("deploy").setDescription("설치"),
+  async (message: Message, bot: Bot) => {
     const guildCommands: ApplicationCommandDataResolvable[] = [];
     await Promise.all(bot.commands.map((command) => guildCommands.push(command.data.toJSON())));
     await message.guild?.commands.set(guildCommands);
-    console.log(message.guild?.commands);
     await message.reply(
       `Complete! Commands(${guildCommands.length}): ` +
         guildCommands
@@ -18,5 +15,5 @@ module.exports = {
           .toString()
           .replace(/,/g, ", ")
     );
-  },
-};
+  }
+);
