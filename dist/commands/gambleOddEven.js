@@ -42,6 +42,6 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
         embedOption.icon = "disappointed_relieved";
         embedOption.description = `아쉽습니다. 도박에 실패하여 \`${betMoney.toLocaleString("ko-KR")}원\`을 잃었습니다.`;
     }
-    embedOption.description += `\n현재 가진 돈: \`${userdata.money.amount.toLocaleString("ko-KR")}원\``;
+    embedOption.description += `\n현재 가진 돈: \`${userdata.money.amount.toLocaleString("ko-KR")}원\`\n오늘 남은 도박 횟수: ${10 - userdata.gamble.count}회`;
     await interaction.editReply((0, types_1.Embed)(embedOption));
 });
