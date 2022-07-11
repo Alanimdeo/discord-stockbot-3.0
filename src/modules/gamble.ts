@@ -1,5 +1,6 @@
 import { isToday, toDateString } from "./time";
-import { Embed, User } from "../types";
+import { Embed } from "../types";
+import { User } from "./user";
 
 export async function checkDailyLimit(user: User): Promise<boolean> {
   const lastPlayed = new Date(user.gamble.lastPlayed);

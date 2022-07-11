@@ -2,10 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Money = void 0;
 class Money {
-    constructor(user, amount = 1000000) {
-        this.user = user;
-        this.amount = amount;
-    }
+    user;
+    amount;
     async setMoney(amount) {
         this.amount = amount;
         await updateMoney(this.user, this.amount);
@@ -20,6 +18,10 @@ class Money {
         this.amount -= amount;
         await updateMoney(this.user, this.amount);
         return this;
+    }
+    constructor(user, amount = 1000000) {
+        this.user = user;
+        this.amount = amount;
     }
 }
 exports.Money = Money;

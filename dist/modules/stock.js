@@ -5,16 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getStockInfo = exports.UserStock = void 0;
 const axios_1 = __importDefault(require("axios"));
-const types_1 = require("../types");
-const error_1 = require("../types/error");
 class UserStock {
-    constructor(user, status = {}) {
-        this.user = user;
-        this.status = status;
-    }
+    user;
+    status;
     async setStock(code, amount, buyPrice) {
         if (amount < 0 || (buyPrice && buyPrice < 0)) {
-            throw new error_1.NegativeNumberError("The amount or buyPrice of stock cannot be negative.");
+            throw new Error("NegativeNumber");
         }
         else if (amount === 0) {
             console.log("If you want to remove stock, use removeStock instead.");
@@ -29,7 +25,7 @@ class UserStock {
     }
     async addStock(code, amount, price) {
         if (amount < 0 || price < 0) {
-            throw new error_1.NegativeNumberError("Adding negative number using addStock can cause error because it doesn't check if the amount is 0. Use reduceStock or setStock or removeStock instead.");
+            throw new Error("NegativeNumber");
         }
         if (!this.status[code]) {
             this.status[code] = {
@@ -46,13 +42,13 @@ class UserStock {
     }
     async reduceStock(code, amount, price) {
         if (amount < 0 || price < 0) {
-            throw new error_1.NegativeNumberError("Reducing the amount of stock using reduceStock is not recommmended. use addStock instead.");
+            throw new Error("NegativeNumber");
         }
         else if (!this.status[code]) {
-            throw new types_1.NotFoundError("The user does not have this stock.");
+            throw new Error("NotHavingStock");
         }
         else if (this.status[code].amount < amount) {
-            throw new error_1.NegativeNumberError("The user does not have enough stock.");
+            throw new Error("NotEnoughStock");
         }
         if (this.status[code].amount === amount) {
             return await this.removeStock(code);
@@ -66,11 +62,15 @@ class UserStock {
     }
     async removeStock(code) {
         if (!this.status[code]) {
-            throw new types_1.NotFoundError("The user does not have this stock.");
+            throw new Error("NotHavingStock");
         }
         delete this.status[code];
         await updateStock(this.user, this.status);
         return this;
+    }
+    constructor(user, status = {}) {
+        this.user = user;
+        this.status = status;
     }
 }
 exports.UserStock = UserStock;
@@ -86,13 +86,13 @@ async function getStockInfo(query, corpList) {
         name = Object.keys(corpList)[Object.values(corpList).indexOf(code)];
     }
     else {
-        throw new types_1.NotFoundError("Result not found.");
+        throw new Error("ResultNotFound");
     }
     try {
         const response = await (0, axios_1.default)(`http://api.finance.naver.com/service/itemSummary.nhn?itemcode=${code}`);
         const data = response.data;
         if (response.status !== 200 || !data) {
-            throw new types_1.StockFetchFailedError("Failed to get stock info.");
+            throw new Error("StockFetchFailed");
         }
         const risefall = data.risefall === 1
             ? "upperLimit"

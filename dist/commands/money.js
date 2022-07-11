@@ -89,7 +89,7 @@ function handleError(err) {
         description: "알 수 없는 오류가 발생했습니다. 개발자에게 문의하세요.",
     };
     if (err instanceof Error) {
-        switch (err.name) {
+        switch (err.message) {
             case "StockFetchFailed":
                 option.title = "주식 정보 읽기 실패";
                 option.description = "주식 정보를 읽어오는 데 실패했습니다. 서버 문제일 수 있으니 나중에 다시 시도해 보세요.";

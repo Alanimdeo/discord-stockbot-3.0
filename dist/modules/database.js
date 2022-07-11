@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserdata = exports.verifyUser = exports.query = void 0;
+exports.createUser = exports.getUserdata = exports.verifyUser = exports.query = void 0;
 const mysql_1 = require("mysql");
 const config_1 = __importDefault(require("../config"));
-const types_1 = require("../types");
+const user_1 = require("../modules/user");
+const time_1 = require("./time");
 const db = (0, mysql_1.createConnection)({
     host: config_1.default.mysqlConfig.host,
     port: config_1.default.mysqlConfig.port,
@@ -32,10 +33,24 @@ async function getUserdata(userId) {
             if (err)
                 return reject(err);
             else if (result.length === 0) {
-                return reject(new types_1.NotFoundError("User not found."));
+                return reject(new Error("UserNotFound"));
             }
-            return resolve(new types_1.User(result[0].id, result[0].money, JSON.parse(result[0].stock), JSON.parse(result[0].gold), JSON.parse(result[0].lottery), JSON.parse(result[0].gamble), result[0].lastClaim));
+            return resolve(new user_1.User(result[0].id, result[0].money, JSON.parse(result[0].stock), JSON.parse(result[0].gold), JSON.parse(result[0].lottery), JSON.parse(result[0].gamble), result[0].lastClaim));
         });
     });
 }
 exports.getUserdata = getUserdata;
+async function createUser(userId) {
+    if (await verifyUser(userId)) {
+        throw new Error("UserAlreadyExists");
+    }
+    (0, exports.query)("INSERT INTO users (id, stock, lottery, gamble, lastClaim) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+        userId,
+        "{}",
+        "[]",
+        `{"count":0,"lastPlayed":${(0, time_1.getYesterday)()}}`,
+        (0, time_1.getYesterday)(),
+    ]);
+    return new user_1.User(userId);
+}
+exports.createUser = createUser;

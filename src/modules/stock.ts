@@ -1,13 +1,13 @@
 import axios from "axios";
-import { Asset, CorpList, NotFoundError, StockFetchFailedError, User } from "../types";
-import { NegativeNumberError } from "../types/error";
+import { Asset, CorpList } from "../types";
+import { User } from "./user";
 
 export class UserStock {
   user: User;
   status: UserStockStatus;
   async setStock(code: string, amount: number, buyPrice?: number): Promise<UserStock> {
     if (amount < 0 || (buyPrice && buyPrice < 0)) {
-      throw new NegativeNumberError("The amount or buyPrice of stock cannot be negative.");
+      throw new Error("NegativeNumber");
     } else if (amount === 0) {
       console.log("If you want to remove stock, use removeStock instead.");
       return this.removeStock(code);
@@ -21,9 +21,7 @@ export class UserStock {
   }
   async addStock(code: string, amount: number, price: number): Promise<UserStock> {
     if (amount < 0 || price < 0) {
-      throw new NegativeNumberError(
-        "Adding negative number using addStock can cause error because it doesn't check if the amount is 0. Use reduceStock or setStock or removeStock instead."
-      );
+      throw new Error("NegativeNumber");
     }
     if (!this.status[code]) {
       this.status[code] = {
@@ -39,13 +37,11 @@ export class UserStock {
   }
   async reduceStock(code: string, amount: number, price: number): Promise<UserStock> {
     if (amount < 0 || price < 0) {
-      throw new NegativeNumberError(
-        "Reducing the amount of stock using reduceStock is not recommmended. use addStock instead."
-      );
+      throw new Error("NegativeNumber");
     } else if (!this.status[code]) {
-      throw new NotFoundError("The user does not have this stock.");
+      throw new Error("NotHavingStock");
     } else if (this.status[code].amount < amount) {
-      throw new NegativeNumberError("The user does not have enough stock.");
+      throw new Error("NotEnoughStock");
     }
     if (this.status[code].amount === amount) {
       return await this.removeStock(code);
@@ -58,7 +54,7 @@ export class UserStock {
   }
   async removeStock(code: string): Promise<UserStock> {
     if (!this.status[code]) {
-      throw new NotFoundError("The user does not have this stock.");
+      throw new Error("NotHavingStock");
     }
     delete this.status[code];
     await updateStock(this.user, this.status);
@@ -99,13 +95,13 @@ export async function getStockInfo(query: string, corpList: CorpList): Promise<S
     code = query.padStart(6, "0");
     name = Object.keys(corpList)[Object.values(corpList).indexOf(code)];
   } else {
-    throw new NotFoundError("Result not found.");
+    throw new Error("ResultNotFound");
   }
   try {
     const response = await axios(`http://api.finance.naver.com/service/itemSummary.nhn?itemcode=${code}`);
     const data = response.data;
     if (response.status !== 200 || !data) {
-      throw new StockFetchFailedError("Failed to get stock info.");
+      throw new Error("StockFetchFailed");
     }
     const risefall =
       data.risefall === 1

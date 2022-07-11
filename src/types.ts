@@ -1,3 +1,4 @@
+import { appendFileSync } from "fs";
 import { Client, ClientOptions, Collection, ColorResolvable, EmbedFooterData, MessageEmbed } from "discord.js";
 import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "@discordjs/builders";
 
@@ -67,6 +68,6 @@ export function Embed(option: EmbedOption) {
   };
 }
 
-export { User } from "./user";
-
-export { errorLog, NotFoundError, StockFetchFailedError } from "./error";
+export function errorLog(err: any, caller: string) {
+  appendFileSync("./error.log", `[${new Date().toLocaleString()}] - ${caller}\n${String(err)}\n\n`);
+}

@@ -6,15 +6,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGoldPrice = exports.Gold = void 0;
 const axios_1 = __importDefault(require("axios"));
 class Gold {
+    user;
+    amount;
+    buyPrice;
+    async setGold(amount) { }
+    async addGold(amount) { }
+    async reduceGold(amount) { }
+    async removeGold(amount) { }
+    toQueryOption() {
+        return {
+            key: "gold",
+            value: JSON.stringify({ amount: this.amount, buyPrice: this.buyPrice }),
+        };
+    }
     constructor(user, amount, buyPrice) {
         this.user = user;
         this.amount = amount || 0;
         this.buyPrice = buyPrice || 0;
     }
-    async setGold(amount) { }
-    async addGold(amount) { }
-    async reduceGold(amount) { }
-    async removeGold(amount) { }
 }
 exports.Gold = Gold;
 async function getGoldPrice() {

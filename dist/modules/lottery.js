@@ -6,17 +6,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.addLottery = exports.getDrwNo = exports.getDrwInfo = exports.DrwInfo = exports.Lottery = void 0;
 const axios_1 = __importDefault(require("axios"));
 class Lottery {
+    drwNo;
+    numbers;
     constructor(numbers, drwNo = getDrwNo()) {
         this.drwNo = drwNo;
         if (numbers) {
             if (numbers.length !== 6) {
-                throw new Error("Numbers of lottery must be 6.");
+                throw new Error("NotSixNumbers");
             }
             else if (numbers.filter((n) => n < 1 || n > 45 || Math.floor(n) !== n).length > 0) {
-                throw new Error("Each number must be integer between 1 and 45.");
+                throw new Error("IllegalNumber");
             }
             else if (new Set(numbers).size !== 6) {
-                throw new Error("Each number must be unique.");
+                throw new Error("NotUniqueNumber");
             }
             this.numbers = numbers;
         }
@@ -32,7 +34,7 @@ class Lottery {
                 return f - s;
             });
             if (lottery.length !== 6) {
-                throw new Error("Unexpected Error: lottery.length !== 6");
+                throw new Error("Unexpected NotSixNumbers");
             }
             this.numbers = lottery;
         }
@@ -40,9 +42,18 @@ class Lottery {
 }
 exports.Lottery = Lottery;
 class DrwInfo {
+    returnValue;
+    drwNo;
+    drwNoDate;
+    totSellamnt;
+    firstAccumamnt;
+    firstPrzwnerCo;
+    firstWinamnt;
+    drwtNo;
+    bnusNo;
     constructor(drwInfo) {
         if (drwInfo.returnValue == "fail") {
-            throw new Error("Failed to fetch drwInfo.");
+            throw new Error("DrwInfoFetchFailed");
         }
         this.returnValue = drwInfo.returnValue;
         this.drwNo = drwInfo.drwNo;
@@ -70,7 +81,7 @@ async function getDrwInfo(drwNo = getDrwNo()) {
         return new DrwInfo(drwInfo);
     }
     else {
-        throw new Error("Failed to get drwInfo");
+        throw new Error("DrwInfoFetchFailed");
     }
 }
 exports.getDrwInfo = getDrwInfo;
@@ -91,7 +102,7 @@ exports.getDrwNo = getDrwNo;
 async function addLottery(user, lottery) {
     try {
         if (user.lottery.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
-            throw new Error("Lottery limit exceeded.");
+            throw new Error("LotteryLimitExceeded");
         }
         user.lottery.push(lottery);
         await user.update([{ key: "lottery", value: JSON.stringify(user.lottery) }]);

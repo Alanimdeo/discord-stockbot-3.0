@@ -145,8 +145,8 @@ function handleError(err) {
         description: "알 수 없는 오류가 발생했습니다. 개발자에게 문의하세요.",
     };
     if (err instanceof Error) {
-        switch (err.name) {
-            case "NotFound":
+        switch (err.message) {
+            case "ResultNotFound":
                 option.title = "검색 결과 없음";
                 option.description = "검색 결과가 없습니다. 회사명 또는 종목코드를 올바르게 입력하였는지 확인하세요.";
                 break;

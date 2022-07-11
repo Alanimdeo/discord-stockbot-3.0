@@ -1,5 +1,6 @@
 import axios from "axios";
-import { Asset, User } from "../types";
+import { Asset } from "../types";
+import { QueryOption, User } from "./user";
 
 export class Gold implements Asset {
   user: User;
@@ -9,6 +10,12 @@ export class Gold implements Asset {
   async addGold(amount: number) {}
   async reduceGold(amount: number) {}
   async removeGold(amount: number) {}
+  toQueryOption(): QueryOption {
+    return {
+      key: "gold",
+      value: JSON.stringify({ amount: this.amount, buyPrice: this.buyPrice }),
+    };
+  }
 
   constructor(user: User, amount?: number, buyPrice?: number) {
     this.user = user;

@@ -1,11 +1,11 @@
 import { format } from "mysql";
-import { Asset, GambleInfo } from ".";
-import { query, QueryOption } from "../modules/database";
-import { Gold } from "../modules/gold";
-import { Lottery } from "../modules/lottery";
-import { Money } from "../modules/money";
-import { UserStock, UserStockStatus } from "../modules/stock";
-import { getToday, getYesterday } from "../modules/time";
+import { Asset, GambleInfo } from "../types";
+import { query } from "./database";
+import { Gold } from "./gold";
+import { Lottery } from "./lottery";
+import { Money } from "./money";
+import { UserStock, UserStockStatus } from "./stock";
+import { getYesterday } from "./time";
 
 export class User {
   id: string;
@@ -41,7 +41,12 @@ export class User {
     this.stock = new UserStock(this, stock);
     this.gold = new Gold(this, gold?.amount, gold?.buyPrice);
     this.lottery = lottery || [];
-    this.gamble = gamble || { count: 0, lastPlayed: getToday() };
+    this.gamble = gamble || { count: 0, lastPlayed: getYesterday() };
     this.lastClaim = lastClaim || getYesterday();
   }
+}
+
+export interface QueryOption {
+  key: keyof User;
+  value: string;
 }

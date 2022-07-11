@@ -1,6 +1,7 @@
 import { createConnection } from "mysql";
 import config from "../config";
-import { NotFoundError, User } from "../types";
+import { User } from "../modules/user";
+import { getYesterday } from "./time";
 
 const db = createConnection({
   host: config.mysqlConfig.host,
@@ -27,7 +28,7 @@ export async function getUserdata(userId: string): Promise<User> {
     query("SELECT * FROM users WHERE id = ?", [userId], (err, result) => {
       if (err) return reject(err);
       else if (result.length === 0) {
-        return reject(new NotFoundError("User not found."));
+        return reject(new Error("UserNotFound"));
       }
       return resolve(
         new User(
@@ -44,7 +45,16 @@ export async function getUserdata(userId: string): Promise<User> {
   });
 }
 
-export interface QueryOption {
-  key: keyof User;
-  value: string;
+export async function createUser(userId: string): Promise<User> {
+  if (await verifyUser(userId)) {
+    throw new Error("UserAlreadyExists");
+  }
+  query("INSERT INTO users (id, stock, lottery, gamble, lastClaim) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+    userId,
+    "{}",
+    "[]",
+    `{"count":0,"lastPlayed":${getYesterday()}}`,
+    getYesterday(),
+  ]);
+  return new User(userId);
 }

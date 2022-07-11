@@ -1,4 +1,4 @@
-import { User } from "../types";
+import { User } from "../modules/user";
 
 export class Money {
   user: User;
