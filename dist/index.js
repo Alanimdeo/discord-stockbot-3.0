@@ -30,6 +30,14 @@ for (const file of adminCommands) {
 }
 bot.once("ready", async () => {
     console.log(`로그인 완료! 토큰: \x1b[32m${config_1.default.token}\x1b[0m`);
+    await getCorpList();
+    setInterval(async () => {
+        console.log("상장기업 목록을 새로고침합니다.");
+        await getCorpList();
+    }, 86400000);
+    console.log("준비 완료!");
+});
+async function getCorpList() {
     console.log("상장기업 목록 다운로드 중...");
     const companies = await (0, download_1.default)("http://kind.krx.co.kr/corpgeneral/corpList.do?method=download");
     console.log("상장기업 목록 다운로드 완료!");
@@ -48,8 +56,7 @@ bot.once("ready", async () => {
         fs_1.default.writeFileSync("./corpList.json", JSON.stringify(corpList, null, 2), "utf-8");
         console.log("상장기업 목록 저장 완료!");
     }
-    console.log("준비 완료!");
-});
+}
 bot.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand())
         return;

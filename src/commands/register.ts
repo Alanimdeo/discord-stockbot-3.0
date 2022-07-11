@@ -8,7 +8,7 @@ module.exports = new Command(
   async (interaction: CommandInteraction, bot: Bot) => {
     try {
       await createUser(interaction.user.id);
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#008000",
           icon: "white_check_mark",
@@ -17,7 +17,7 @@ module.exports = new Command(
         })
       );
     } catch (err) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",

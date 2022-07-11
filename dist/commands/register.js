@@ -6,7 +6,7 @@ const types_1 = require("../types");
 module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setName("가입").setDescription("주식 서버에 가입합니다. 최초 1회만 필요합니다."), async (interaction, bot) => {
     try {
         await (0, database_1.createUser)(interaction.user.id);
-        return await interaction.editReply((0, types_1.Embed)({
+        await interaction.editReply((0, types_1.Embed)({
             color: "#008000",
             icon: "white_check_mark",
             title: "가입 완료",
@@ -14,7 +14,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setNam
         }));
     }
     catch (err) {
-        return await interaction.editReply((0, types_1.Embed)({
+        await interaction.editReply((0, types_1.Embed)({
             color: "#ff0000",
             icon: "warning",
             title: "오류",

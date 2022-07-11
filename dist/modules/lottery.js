@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addLottery = exports.getDrwNo = exports.getDrwInfo = exports.DrwInfo = exports.Lottery = void 0;
 const axios_1 = __importDefault(require("axios"));
+const iconv_lite_1 = require("iconv-lite");
+const node_html_parser_1 = __importDefault(require("node-html-parser"));
 class Lottery {
     drwNo;
     numbers;
@@ -51,6 +53,7 @@ class DrwInfo {
     firstWinamnt;
     drwtNo;
     bnusNo;
+    prize;
     constructor(drwInfo) {
         if (drwInfo.returnValue == "fail") {
             throw new Error("DrwInfoFetchFailed");
@@ -74,13 +77,38 @@ class DrwInfo {
     }
 }
 exports.DrwInfo = DrwInfo;
-async function getDrwInfo(drwNo = getDrwNo()) {
+async function getDrwInfo(drwNo = getDrwNo(), getPrize = false) {
+    if (drwNo > getDrwNo()) {
+        throw new Error("NotDrawnYet", { cause: new Error("ExceedsLatestDrw") });
+    }
+    else if (drwNo < 1) {
+        throw new Error("IllegalDrwNo");
+    }
     const response = await (0, axios_1.default)(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`);
-    const drwInfo = response.data;
-    if (drwInfo.returnValue === "success") {
-        return new DrwInfo(drwInfo);
+    const drwInfoRaw = response.data;
+    if (drwInfoRaw.returnValue === "success") {
+        const drwInfo = new DrwInfo(drwInfoRaw);
+        if (getPrize) {
+            const detailedResponse = await (0, axios_1.default)({
+                method: "POST",
+                url: "https://www.dhlottery.co.kr/gameResult.do?method=byWin",
+                data: `drwNo=${drwNo}`,
+                responseType: "arraybuffer",
+                responseEncoding: "binary",
+            });
+            const prizes = (0, node_html_parser_1.default)((0, iconv_lite_1.decode)(detailedResponse.data, "EUC-KR")).querySelectorAll("td.tar");
+            drwInfo.prize = {
+                firstPrize: Number(prizes[1].childNodes.toString().replace(/[^0-9]/g, "")),
+                secondPrize: Number(prizes[3].childNodes.toString().replace(/[^0-9]/g, "")),
+                thirdPrize: Number(prizes[5].childNodes.toString().replace(/[^0-9]/g, "")),
+            };
+        }
+        return drwInfo;
     }
     else {
+        if (drwNo === getDrwNo()) {
+            throw new Error("NotDrawnYet", { cause: new Error("Saturday") });
+        }
         throw new Error("DrwInfoFetchFailed");
     }
 }

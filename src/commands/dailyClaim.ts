@@ -21,7 +21,7 @@ module.exports = new Command(
     const claimedMoney = Math.floor(Math.random() * 130 + 20) * 100;
     await user.money.addMoney(claimedMoney);
     await user.update([{ key: "lastClaim", value: toDateString() }]);
-    return await interaction.editReply(
+    await interaction.editReply(
       Embed({
         color: "#008000",
         icon: "money_with_wings",

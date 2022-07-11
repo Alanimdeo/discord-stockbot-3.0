@@ -17,7 +17,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setNam
     const claimedMoney = Math.floor(Math.random() * 130 + 20) * 100;
     await user.money.addMoney(claimedMoney);
     await user.update([{ key: "lastClaim", value: (0, time_1.toDateString)() }]);
-    return await interaction.editReply((0, types_1.Embed)({
+    await interaction.editReply((0, types_1.Embed)({
         color: "#008000",
         icon: "money_with_wings",
         title: "오늘의 용돈",

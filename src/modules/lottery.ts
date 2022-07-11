@@ -1,4 +1,6 @@
 import axios from "axios";
+import { decode } from "iconv-lite";
+import parse from "node-html-parser";
 import { User } from "../modules/user";
 
 export type LotteryNumbers = [number, number, number, number, number, number];
@@ -47,6 +49,7 @@ export class DrwInfo {
   firstWinamnt: number;
   drwtNo: LotteryNumbers;
   bnusNo: number;
+  prize?: DrwInfoPrize;
 
   constructor(drwInfo: any) {
     if (drwInfo.returnValue == "fail") {
@@ -71,14 +74,44 @@ export class DrwInfo {
   }
 }
 
-export async function getDrwInfo(drwNo: number = getDrwNo()): Promise<DrwInfo> {
+export async function getDrwInfo(drwNo: number = getDrwNo(), getPrize: boolean = false): Promise<DrwInfo> {
+  if (drwNo > getDrwNo()) {
+    throw new Error("NotDrawnYet", { cause: new Error("ExceedsLatestDrw") });
+  } else if (drwNo < 1) {
+    throw new Error("IllegalDrwNo");
+  }
   const response = await axios(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`);
-  const drwInfo = response.data;
-  if (drwInfo.returnValue === "success") {
-    return new DrwInfo(drwInfo);
+  const drwInfoRaw = response.data;
+  if (drwInfoRaw.returnValue === "success") {
+    const drwInfo = new DrwInfo(drwInfoRaw);
+    if (getPrize) {
+      const detailedResponse = await axios({
+        method: "POST",
+        url: "https://www.dhlottery.co.kr/gameResult.do?method=byWin",
+        data: `drwNo=${drwNo}`,
+        responseType: "arraybuffer",
+        responseEncoding: "binary",
+      });
+      const prizes = parse(decode(detailedResponse.data, "EUC-KR")).querySelectorAll("td.tar");
+      drwInfo.prize = {
+        firstPrize: Number(prizes[1].childNodes.toString().replace(/[^0-9]/g, "")),
+        secondPrize: Number(prizes[3].childNodes.toString().replace(/[^0-9]/g, "")),
+        thirdPrize: Number(prizes[5].childNodes.toString().replace(/[^0-9]/g, "")),
+      };
+    }
+    return drwInfo;
   } else {
+    if (drwNo === getDrwNo()) {
+      throw new Error("NotDrawnYet", { cause: new Error("Saturday") });
+    }
     throw new Error("DrwInfoFetchFailed");
   }
+}
+
+interface DrwInfoPrize {
+  firstPrize: number;
+  secondPrize: number;
+  thirdPrize: number;
 }
 
 // 가장 최근에 추첨한 로또 번호
