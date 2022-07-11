@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildMember } from "discord.js";
 import { getUserdata } from "../modules/database";
-import { DrwInfo, getDrwInfo, getDrwNo } from "../modules/lottery";
+import { addLottery, DrwInfo, getDrwInfo, getDrwNo, Lottery, LotteryNumbers } from "../modules/lottery";
 import { Bot, Command, Embed, EmbedOption } from "../types";
 
 module.exports = new Command(
@@ -230,3 +230,117 @@ async function 당첨확인(interaction: CommandInteraction, bot: Bot) {
     );
   }
 }
+
+async function 자동(interaction: CommandInteraction, bot: Bot) {
+  if (isPurchaseBlocked()) {
+    return await interaction.editReply(purchaseBlockedEmbed);
+  }
+  try {
+    const userdata = await getUserdata(interaction.user.id);
+    if (userdata.money.amount < 1000) {
+      return await interaction.editReply(
+        Embed({
+          color: "#ff0000",
+          icon: "warning",
+          title: "오류",
+          description: "돈이 부족합니다.",
+        })
+      );
+    }
+    const numbers: LotteryNumbers = [0, 0, 0, 0, 0, 0];
+    while (numbers.includes(0)) {
+      const number = Math.floor(Math.random() * 45) + 1;
+      if (!numbers.includes(number)) {
+        numbers[numbers.indexOf(0)] = number;
+      }
+    }
+    numbers.sort((a, b) => a - b);
+    await userdata.money.reduceMoney(1000);
+    const lottery = new Lottery(numbers, getDrwNo() + 1);
+    await addLottery(userdata, lottery);
+    await interaction.editReply(
+      Embed({
+        color: "#008000",
+        icon: "white_check_mark",
+        title: "구매 완료",
+        description: `로또를 구매했습니다.\n회차: ${lottery.drwNo}회\n번호: **${lottery.numbers.join(" ")}**`,
+      })
+    );
+  } catch (err) {
+    await interaction.editReply(handleError(err));
+  }
+}
+
+function handleError(err: unknown) {
+  const embedOption: EmbedOption = {
+    color: "#ff0000",
+    icon: "warning",
+    title: "오류",
+    description: String(err),
+  };
+  if (err instanceof Error) {
+    switch (err.message) {
+      case "LotteryLimitExceeded":
+        embedOption.title = "구매 한도 도달";
+        embedOption.description = "회차당 최대 5게임까지 구매 가능합니다.\n\n한국도박문제 관리센터: :telephone: 1336";
+        break;
+      case "NotUniqueNumber":
+        embedOption.description = "중복된 번호가 있습니다.";
+        break;
+    }
+  }
+  return Embed(embedOption);
+}
+
+async function 수동(interaction: CommandInteraction, bot: Bot) {
+  if (isPurchaseBlocked()) {
+    return await interaction.editReply(purchaseBlockedEmbed);
+  }
+  try {
+    const userdata = await getUserdata(interaction.user.id);
+    if (userdata.money.amount < 1000) {
+      return await interaction.editReply(
+        Embed({
+          color: "#ff0000",
+          icon: "warning",
+          title: "오류",
+          description: "돈이 부족합니다.",
+        })
+      );
+    }
+    const numbers: LotteryNumbers = [
+      interaction.options.getInteger("번호1", true),
+      interaction.options.getInteger("번호2", true),
+      interaction.options.getInteger("번호3", true),
+      interaction.options.getInteger("번호4", true),
+      interaction.options.getInteger("번호5", true),
+      interaction.options.getInteger("번호6", true),
+    ];
+    numbers.sort((a, b) => a - b);
+    await userdata.money.reduceMoney(1000);
+    const lottery = new Lottery(numbers, getDrwNo() + 1);
+    await addLottery(userdata, lottery);
+    await interaction.editReply(
+      Embed({
+        color: "#008000",
+        icon: "white_check_mark",
+        title: "구매 완료",
+        description: `로또를 구매했습니다.\n회차: ${lottery.drwNo}회\n번호: **${lottery.numbers.join(" ")}**`,
+      })
+    );
+  } catch (err) {
+    await interaction.editReply(handleError(err));
+  }
+}
+
+function isPurchaseBlocked() {
+  const now = new Date();
+  return now.getDate() === 6 && now.getHours() > 19;
+}
+
+const purchaseBlockedEmbed = Embed({
+  color: "#ff0000",
+  icon: "warning",
+  title: "구매 불가",
+  description: "토요일 로또 구매는 오후 8시까지만 가능합니다.\n다음 회차 로또는 내일부터 구매할 수 있습니다.",
+});
