@@ -27,7 +27,8 @@ module.exports = new Command(
         .addIntegerOption((option) =>
           option
             .setName("수량")
-            .setDescription("수량을 입력하세요. 0 이하의 값을 입력할 시 구매할 수 있는 수량 전체를 구매합니다.")
+            .setDescription("수량을 입력하세요. 0을 입력할 시 구매할 수 있는 수량 전체를 구매합니다.")
+            .setMinValue(0)
             .setRequired(true)
         )
     )
@@ -41,7 +42,8 @@ module.exports = new Command(
         .addIntegerOption((option) =>
           option
             .setName("수량")
-            .setDescription("수량을 입력하세요. 0 이하의 값을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
+            .setDescription("수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
+            .setMinValue(0)
             .setRequired(true)
         )
     ),
@@ -52,7 +54,7 @@ module.exports = new Command(
 
 async function 확인(interaction: CommandInteraction, bot: Bot) {
   try {
-    const stockInfo = await getStockInfo(interaction.options.getString("회사명")!, bot.corpList);
+    const stockInfo = await getStockInfo(interaction.options.getString("회사명", true), bot.corpList);
     await interaction.editReply(
       Embed({
         color: "#0090ff",
@@ -109,8 +111,8 @@ async function 내주식(interaction: CommandInteraction, bot: Bot) {
 
 async function 구매(interaction: CommandInteraction, bot: Bot) {
   try {
-    const corpName = interaction.options.getString("회사명")!;
-    let amount = interaction.options.getInteger("수량")!;
+    const corpName = interaction.options.getString("회사명", true);
+    let amount = interaction.options.getInteger("수량", true);
     const userdata = await getUserdata(interaction.user.id);
     const stockInfo = await getStockInfo(corpName, bot.corpList);
     if (amount < 1) {
@@ -149,8 +151,8 @@ async function 구매(interaction: CommandInteraction, bot: Bot) {
 
 async function 판매(interaction: CommandInteraction, bot: Bot) {
   try {
-    const corpName = interaction.options.getString("회사명")!;
-    let amount = interaction.options.getInteger("수량")!;
+    const corpName = interaction.options.getString("회사명", true);
+    let amount = interaction.options.getInteger("수량", true);
     const userdata = await getUserdata(interaction.user.id);
     const stockInfo = await getStockInfo(corpName, bot.corpList);
     if (!userdata.stock.status[stockInfo.code]) {

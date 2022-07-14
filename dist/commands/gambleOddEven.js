@@ -12,12 +12,12 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setDescription("홀 또는 짝을 선택하세요.")
     .addChoices({ name: "홀", value: "odd" }, { name: "짝", value: "even" })
     .setRequired(true))
-    .addIntegerOption((option) => option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setRequired(true)), async (interaction, bot) => {
+    .addIntegerOption((option) => option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setMinValue(1).setRequired(true)), async (interaction, bot) => {
     const userdata = await (0, database_1.getUserdata)(interaction.user.id);
     if (!(await (0, gamble_1.checkDailyLimit)(userdata))) {
         return await interaction.editReply(gamble_1.dailyLimitExceededEmbed);
     }
-    const betMoney = interaction.options.getInteger("금액");
+    const betMoney = interaction.options.getInteger("금액", true);
     if (userdata.money.amount < betMoney) {
         return await interaction.editReply((0, types_1.Embed)({
             color: "#ff0000",
@@ -32,7 +32,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
         title: `결과: ${random === "odd" ? "홀" : "짝"}`,
         description: "",
     };
-    if (random === interaction.options.getString("홀짝")) {
+    if (random === interaction.options.getString("홀짝", true)) {
         await userdata.money.addMoney(betMoney * 0.5);
         embedOption.icon = "tada";
         embedOption.description = `축하합니다! 도박에 성공하여 \`${(betMoney * 0.5).toLocaleString("ko-KR")}원\`을 얻었습니다.`;

@@ -14,7 +14,7 @@ class UserStock {
         }
         else if (amount === 0) {
             console.log("If you want to remove stock, use removeStock instead.");
-            return this.removeStock(code);
+            return await this.removeStock(code);
         }
         this.status[code] = {
             amount,

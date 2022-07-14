@@ -13,7 +13,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setName("송금")
     .setDescription("돈을 다른 사람에게 보냅니다.")
     .addUserOption((option) => option.setName("대상").setDescription("돈을 받을 사람을 입력하세요.").setRequired(true))
-    .addIntegerOption((option) => option.setName("금액").setDescription("보낼 금액을 입력하세요.").setRequired(true))), async (interaction, bot) => {
+    .addIntegerOption((option) => option.setName("금액").setDescription("보낼 금액을 입력하세요.").setMinValue(1).setRequired(true))), async (interaction, bot) => {
     return await eval(`${interaction.options.getSubcommand()}(interaction, bot)`);
 });
 async function 확인(interaction, bot) {
@@ -40,7 +40,7 @@ async function 확인(interaction, bot) {
 }
 async function 송금(interaction, bot) {
     try {
-        const target = interaction.options.getUser("대상");
+        const target = interaction.options.getUser("대상", true);
         if (!(await (0, database_1.verifyUser)(target.id))) {
             return await interaction.editReply((0, types_1.Embed)({
                 color: "#ff0000",
@@ -50,15 +50,7 @@ async function 송금(interaction, bot) {
             }));
         }
         const targetUserdata = await (0, database_1.getUserdata)(target.id);
-        const amount = interaction.options.getInteger("금액");
-        if (amount < 1) {
-            return await interaction.editReply((0, types_1.Embed)({
-                color: "#ff0000",
-                icon: "warning",
-                title: "오류",
-                description: "1원 미만은 송금할 수 없습니다.",
-            }));
-        }
+        const amount = interaction.options.getInteger("금액", true);
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         if (userdata.money.amount < amount) {
             await interaction.editReply((0, types_1.Embed)({

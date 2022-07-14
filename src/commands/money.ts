@@ -18,7 +18,7 @@ module.exports = new Command(
           option.setName("대상").setDescription("돈을 받을 사람을 입력하세요.").setRequired(true)
         )
         .addIntegerOption((option) =>
-          option.setName("금액").setDescription("보낼 금액을 입력하세요.").setRequired(true)
+          option.setName("금액").setDescription("보낼 금액을 입력하세요.").setMinValue(1).setRequired(true)
         )
     ),
   async (interaction: CommandInteraction, bot: Bot) => {
@@ -58,7 +58,7 @@ async function 확인(interaction: CommandInteraction, bot: Bot) {
 
 async function 송금(interaction: CommandInteraction, bot: Bot) {
   try {
-    const target = interaction.options.getUser("대상")!;
+    const target = interaction.options.getUser("대상", true);
     if (!(await verifyUser(target.id))) {
       return await interaction.editReply(
         Embed({
@@ -70,17 +70,7 @@ async function 송금(interaction: CommandInteraction, bot: Bot) {
       );
     }
     const targetUserdata = await getUserdata(target.id);
-    const amount = interaction.options.getInteger("금액")!;
-    if (amount < 1) {
-      return await interaction.editReply(
-        Embed({
-          color: "#ff0000",
-          icon: "warning",
-          title: "오류",
-          description: "1원 미만은 송금할 수 없습니다.",
-        })
-      );
-    }
+    const amount = interaction.options.getInteger("금액", true);
     const userdata = await getUserdata(interaction.user.id);
     if (userdata.money.amount < amount) {
       await interaction.editReply(

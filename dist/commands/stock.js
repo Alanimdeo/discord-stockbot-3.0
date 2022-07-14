@@ -18,7 +18,8 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .addStringOption((option) => option.setName("회사명").setDescription("회사명 또는 종목코드를 입력하세요.").setRequired(true))
     .addIntegerOption((option) => option
     .setName("수량")
-    .setDescription("수량을 입력하세요. 0 이하의 값을 입력할 시 구매할 수 있는 수량 전체를 구매합니다.")
+    .setDescription("수량을 입력하세요. 0을 입력할 시 구매할 수 있는 수량 전체를 구매합니다.")
+    .setMinValue(0)
     .setRequired(true)))
     .addSubcommand((command) => command
     .setName("판매")
@@ -26,13 +27,14 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .addStringOption((option) => option.setName("회사명").setDescription("회사명 또는 종목코드를 입력하세요.").setRequired(true))
     .addIntegerOption((option) => option
     .setName("수량")
-    .setDescription("수량을 입력하세요. 0 이하의 값을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
+    .setDescription("수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
+    .setMinValue(0)
     .setRequired(true))), async (interaction, bot) => {
     return eval(`${interaction.options.getSubcommand()}(interaction, bot)`);
 });
 async function 확인(interaction, bot) {
     try {
-        const stockInfo = await (0, stock_1.getStockInfo)(interaction.options.getString("회사명"), bot.corpList);
+        const stockInfo = await (0, stock_1.getStockInfo)(interaction.options.getString("회사명", true), bot.corpList);
         await interaction.editReply((0, types_1.Embed)({
             color: "#0090ff",
             icon: "chart_with_upwards_trend",
@@ -77,8 +79,8 @@ async function 내주식(interaction, bot) {
 }
 async function 구매(interaction, bot) {
     try {
-        const corpName = interaction.options.getString("회사명");
-        let amount = interaction.options.getInteger("수량");
+        const corpName = interaction.options.getString("회사명", true);
+        let amount = interaction.options.getInteger("수량", true);
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         const stockInfo = await (0, stock_1.getStockInfo)(corpName, bot.corpList);
         if (amount < 1) {
@@ -107,8 +109,8 @@ async function 구매(interaction, bot) {
 }
 async function 판매(interaction, bot) {
     try {
-        const corpName = interaction.options.getString("회사명");
-        let amount = interaction.options.getInteger("수량");
+        const corpName = interaction.options.getString("회사명", true);
+        let amount = interaction.options.getInteger("수량", true);
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         const stockInfo = await (0, stock_1.getStockInfo)(corpName, bot.corpList);
         if (!userdata.stock.status[stockInfo.code]) {

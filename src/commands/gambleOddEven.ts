@@ -15,13 +15,15 @@ module.exports = new Command(
         .addChoices({ name: "홀", value: "odd" }, { name: "짝", value: "even" })
         .setRequired(true)
     )
-    .addIntegerOption((option) => option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setRequired(true)),
+    .addIntegerOption((option) =>
+      option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setMinValue(1).setRequired(true)
+    ),
   async (interaction: CommandInteraction, bot: Bot) => {
     const userdata = await getUserdata(interaction.user.id);
     if (!(await checkDailyLimit(userdata))) {
       return await interaction.editReply(dailyLimitExceededEmbed);
     }
-    const betMoney = interaction.options.getInteger("금액")!;
+    const betMoney = interaction.options.getInteger("금액", true);
     if (userdata.money.amount < betMoney) {
       return await interaction.editReply(
         Embed({
@@ -38,7 +40,7 @@ module.exports = new Command(
       title: `결과: ${random === "odd" ? "홀" : "짝"}`,
       description: "",
     };
-    if (random === interaction.options.getString("홀짝")!) {
+    if (random === interaction.options.getString("홀짝", true)) {
       await userdata.money.addMoney(betMoney * 0.5);
       embedOption.icon = "tada";
       embedOption.description = `축하합니다! 도박에 성공하여 \`${(betMoney * 0.5).toLocaleString(
