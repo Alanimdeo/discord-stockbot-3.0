@@ -25,7 +25,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setDescription("수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
     .setMinValue(0)
     .setRequired(true))), async (interaction, bot) => {
-    eval(`${interaction.options.getSubcommand()}(interaction, bot)`);
+    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
 });
 async function 시세(interaction, bot) {
     const price = await (0, gold_1.getGoldPrice)();

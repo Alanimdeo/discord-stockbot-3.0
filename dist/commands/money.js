@@ -14,7 +14,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setDescription("돈을 다른 사람에게 보냅니다.")
     .addUserOption((option) => option.setName("대상").setDescription("돈을 받을 사람을 입력하세요.").setRequired(true))
     .addIntegerOption((option) => option.setName("금액").setDescription("보낼 금액을 입력하세요.").setMinValue(1).setRequired(true))), async (interaction, bot) => {
-    return await eval(`${interaction.options.getSubcommand()}(interaction, bot)`);
+    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
 });
 async function 확인(interaction, bot) {
     try {

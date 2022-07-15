@@ -30,7 +30,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setDescription("수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
     .setMinValue(0)
     .setRequired(true))), async (interaction, bot) => {
-    return eval(`${interaction.options.getSubcommand()}(interaction, bot)`);
+    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
 });
 async function 확인(interaction, bot) {
     try {

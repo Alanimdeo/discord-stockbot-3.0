@@ -55,7 +55,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setMinValue(1)
     .setMaxValue(45)
     .setRequired(true)))), async (interaction, bot) => {
-    eval(`${interaction.options.getSubcommand()}(interaction, bot)`);
+    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
 });
 async function 회차확인(interaction, bot) {
     try {
