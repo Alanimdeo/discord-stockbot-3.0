@@ -49,3 +49,21 @@
   - `/홀짝`
 - 기타
   - `/한강`
+
+## config.js 형식
+
+```js
+export default {
+  token: "Bot token",
+  adminPrefix: "=stock",
+  adminIDs: ["ID as string"...],
+  mysqlConfig: {
+    host: "MySQL host",
+    port: 3306,
+    user: "MySQL username",
+    password: "MySQL password",
+    database: "stockbot",
+  },
+  exportCorpListAsFile: false,
+}
+```
