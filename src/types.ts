@@ -68,6 +68,6 @@ export function Embed(option: EmbedOption) {
   };
 }
 
-export function errorLog(err: any, caller: string) {
+export function errorLog(err: unknown, caller: string) {
   appendFileSync("./error.log", `[${new Date().toLocaleString()}] - ${caller}\n${String(err)}\n\n`);
 }

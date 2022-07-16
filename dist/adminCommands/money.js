@@ -4,7 +4,7 @@ const builders_1 = require("@discordjs/builders");
 const database_1 = require("../modules/database");
 const types_1 = require("../types");
 module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setName("money").setDescription("돈"), async (message, bot) => {
-    let command = message.content.split(" ");
+    const command = message.content.split(" ");
     command.shift();
     command.shift();
     const id = command.shift();

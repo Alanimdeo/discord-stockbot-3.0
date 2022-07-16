@@ -73,7 +73,7 @@ async function 회차확인(interaction, bot) {
                 color: "#ff0000",
                 icon: "warning",
                 title: "오류",
-                description: err.message + err.cause ? err.cause?.message : "",
+                description: err.message + (err.cause?.message || ""),
             };
             switch (err.message) {
                 case "NotDrawnYet":
@@ -112,7 +112,7 @@ async function 당첨확인(interaction, bot) {
         await Promise.all(Array.from(new Set(userdata.lottery.map((drw) => drw.drwNo).filter((drwNo) => drwNo <= currentDrwNo))).map(async (drwNo) => {
             drwInfos[drwNo] = await (0, lottery_1.getDrwInfo)(drwNo, true);
         }));
-        let reply = [`:information_source: ${interaction.member.displayName} 님의 로또 목록입니다.`];
+        const reply = [`:information_source: ${interaction.member.displayName} 님의 로또 목록입니다.`];
         const shouldDelete = [];
         await Promise.all(userdata.lottery.map(async (drw, index) => {
             let prefix = "", prize = "";

@@ -19,7 +19,7 @@ export class User {
     return new Promise(async (resolve, reject) => {
       const queries: string[] = [];
       options.map((q) => queries.push(`${q.key} = ${format("?", [q.value])}`));
-      let queryString = queries.join(",");
+      const queryString = queries.join(",");
       query(`UPDATE users SET ${queryString} WHERE id = ?`, [this.id], async (err) => {
         if (err) return reject(err);
         return resolve(this);

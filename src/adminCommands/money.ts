@@ -6,7 +6,7 @@ import { Bot, Command } from "../types";
 module.exports = new Command(
   new SlashCommandBuilder().setName("money").setDescription("돈"),
   async (message: Message, bot: Bot) => {
-    let command = message.content.split(" ");
+    const command = message.content.split(" ");
     command.shift();
     command.shift();
 

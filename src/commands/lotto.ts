@@ -106,7 +106,7 @@ async function 회차확인(interaction: CommandInteraction, bot: Bot) {
         color: "#ff0000",
         icon: "warning",
         title: "오류",
-        description: err.message + err.cause ? err.cause?.message! : "",
+        description: err.message + (err.cause?.message || ""),
       };
       switch (err.message) {
         case "NotDrawnYet":
@@ -153,7 +153,7 @@ async function 당첨확인(interaction: CommandInteraction, bot: Bot) {
         }
       )
     );
-    let reply = [`:information_source: ${(interaction.member as GuildMember).displayName} 님의 로또 목록입니다.`];
+    const reply = [`:information_source: ${(interaction.member as GuildMember).displayName} 님의 로또 목록입니다.`];
     const shouldDelete: number[] = [];
     await Promise.all(
       userdata.lottery.map(async (drw, index) => {

@@ -9,7 +9,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setNam
             getUserdata: database_1.getUserdata,
             verifyUser: database_1.verifyUser,
         };
-        let command = message.content.split(" ");
+        const command = message.content.split(" ");
         command.shift();
         command.shift();
         let result = await eval(`(async () => {${command.join(" ")}})()`);

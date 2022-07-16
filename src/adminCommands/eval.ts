@@ -11,7 +11,7 @@ module.exports = new Command(
         getUserdata,
         verifyUser,
       };
-      let command = message.content.split(" ");
+      const command = message.content.split(" ");
       command.shift();
       command.shift();
       let result = await eval(`(async () => {${command.join(" ")}})()`);

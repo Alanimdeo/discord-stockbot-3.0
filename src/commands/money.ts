@@ -36,7 +36,7 @@ async function 확인(interaction: CommandInteraction, bot: Bot) {
         stockMoney += price * userdata.stock.status[key].amount;
       })
     );
-    let goldMoney = (await getGoldPrice()).sell.price * userdata.gold.amount;
+    const goldMoney = (await getGoldPrice()).sell.price * userdata.gold.amount;
     await interaction.editReply(
       Embed({
         color: "#ffff00",

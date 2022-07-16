@@ -88,34 +88,29 @@ async function getStockInfo(query, corpList) {
     else {
         throw new Error("ResultNotFound");
     }
-    try {
-        const response = await (0, axios_1.default)(`http://api.finance.naver.com/service/itemSummary.nhn?itemcode=${code}`);
-        const data = response.data;
-        if (response.status !== 200 || !data) {
-            throw new Error("StockFetchFailed");
-        }
-        const risefall = data.risefall === 1
-            ? "upperLimit"
-            : data.risefall === 2
-                ? "up"
-                : data.risefall === 3
-                    ? "unchanged"
-                    : data.risefall === 4
-                        ? "lowerLimit"
-                        : "down";
-        return {
-            name,
-            code,
-            price: data.now,
-            risefall,
-            diff: data.diff,
-            diffRate: data.rate,
-            high: data.high,
-            low: data.low,
-        };
+    const response = await (0, axios_1.default)(`http://api.finance.naver.com/service/itemSummary.nhn?itemcode=${code}`);
+    const data = response.data;
+    if (response.status !== 200 || !data) {
+        throw new Error("StockFetchFailed");
     }
-    catch (err) {
-        throw err;
-    }
+    const risefall = data.risefall === 1
+        ? "upperLimit"
+        : data.risefall === 2
+            ? "up"
+            : data.risefall === 3
+                ? "unchanged"
+                : data.risefall === 4
+                    ? "lowerLimit"
+                    : "down";
+    return {
+        name,
+        code,
+        price: data.now,
+        risefall,
+        diff: data.diff,
+        diffRate: data.rate,
+        high: data.high,
+        low: data.low,
+    };
 }
 exports.getStockInfo = getStockInfo;

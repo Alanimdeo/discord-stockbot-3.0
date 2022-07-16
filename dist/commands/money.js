@@ -24,7 +24,7 @@ async function 확인(interaction, bot) {
             const { price } = await (0, stock_1.getStockInfo)(key, bot.corpList);
             stockMoney += price * userdata.stock.status[key].amount;
         }));
-        let goldMoney = (await (0, gold_1.getGoldPrice)()).sell.price * userdata.gold.amount;
+        const goldMoney = (await (0, gold_1.getGoldPrice)()).sell.price * userdata.gold.amount;
         await interaction.editReply((0, types_1.Embed)({
             color: "#ffff00",
             icon: "moneybag",

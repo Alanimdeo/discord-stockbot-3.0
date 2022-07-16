@@ -19,7 +19,7 @@ class User {
         return new Promise(async (resolve, reject) => {
             const queries = [];
             options.map((q) => queries.push(`${q.key} = ${(0, mysql_1.format)("?", [q.value])}`));
-            let queryString = queries.join(",");
+            const queryString = queries.join(",");
             (0, database_1.query)(`UPDATE users SET ${queryString} WHERE id = ?`, [this.id], async (err) => {
                 if (err)
                     return reject(err);

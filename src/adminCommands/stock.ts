@@ -7,7 +7,7 @@ module.exports = new Command(
   new SlashCommandBuilder().setName("stock").setDescription("주식"),
   async (message: Message, bot: Bot) => {
     try {
-      let command = message.content.split(" ");
+      const command = message.content.split(" ");
       command.shift();
       command.shift();
 

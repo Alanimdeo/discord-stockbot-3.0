@@ -25,9 +25,9 @@ class Lottery {
             this.numbers = numbers;
         }
         else {
-            let lottery = [0, 0, 0, 0, 0, 0];
+            const lottery = [0, 0, 0, 0, 0, 0];
             while (lottery.includes(0)) {
-                let number = Math.floor(Math.random() * 45) + 1;
+                const number = Math.floor(Math.random() * 45) + 1;
                 if (!lottery.includes(number)) {
                     lottery[lottery.indexOf(0)] = number;
                 }
@@ -128,16 +128,11 @@ function getDrwNo(date = new Date()) {
 }
 exports.getDrwNo = getDrwNo;
 async function addLottery(user, lottery) {
-    try {
-        if (user.lottery.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
-            throw new Error("LotteryLimitExceeded");
-        }
-        user.lottery.push(lottery);
-        await user.update([{ key: "lottery", value: JSON.stringify(user.lottery) }]);
-        return user.lottery;
+    if (user.lottery.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
+        throw new Error("LotteryLimitExceeded");
     }
-    catch (err) {
-        throw err;
-    }
+    user.lottery.push(lottery);
+    await user.update([{ key: "lottery", value: JSON.stringify(user.lottery) }]);
+    return user.lottery;
 }
 exports.addLottery = addLottery;
