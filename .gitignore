@@ -1,7 +1,11 @@
-.eslintrc.json
 .vscode
-config.json
 node_modules
-%EC%83%81%EC%9E%A5%EB%B2%95%EC%9D%B8%EB%AA%A9%EB%A1%9D.xls
+original
+config.json
+config.ts
+config.js
 corpList.json
+debug.ts
+debug.js
+error.log
 test.js
