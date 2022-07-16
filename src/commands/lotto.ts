@@ -79,7 +79,7 @@ module.exports = new Command(
         )
     ),
   async (interaction: CommandInteraction) => {
-    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
+    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction)})()`);
   }
 );
 
