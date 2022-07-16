@@ -201,6 +201,10 @@ async function 자동(interaction) {
             }));
             return;
         }
+        else if (userdata.lottery.filter((drw) => drw.drwNo === (0, lottery_1.getDrwNo)() + 1).length > 5) {
+            await interaction.editReply(limitExceededEmbed);
+            return;
+        }
         const numbers = [0, 0, 0, 0, 0, 0];
         while (numbers.includes(0)) {
             const number = Math.floor(Math.random() * 45) + 1;
@@ -232,10 +236,6 @@ function handleError(err) {
     };
     if (err instanceof Error) {
         switch (err.message) {
-            case "LotteryLimitExceeded":
-                embedOption.title = "구매 한도 도달";
-                embedOption.description = "회차당 최대 5게임까지 구매 가능합니다.\n\n한국도박문제 관리센터: :telephone: 1336";
-                break;
             case "NotUniqueNumber":
                 embedOption.description = "중복된 번호가 있습니다.";
                 break;
@@ -257,6 +257,10 @@ async function 수동(interaction) {
                 title: "오류",
                 description: "돈이 부족합니다.",
             }));
+            return;
+        }
+        else if (userdata.lottery.filter((drw) => drw.drwNo === (0, lottery_1.getDrwNo)() + 1).length > 5) {
+            await interaction.editReply(limitExceededEmbed);
             return;
         }
         const numbers = [
@@ -291,4 +295,10 @@ const purchaseBlockedEmbed = (0, types_1.Embed)({
     icon: "warning",
     title: "구매 불가",
     description: "토요일 로또 구매는 오후 8시까지만 가능합니다.\n다음 회차 로또는 내일부터 구매할 수 있습니다.",
+});
+const limitExceededEmbed = (0, types_1.Embed)({
+    color: "#ff0000",
+    icon: "warning",
+    title: "구매 한도 도달",
+    description: "회차당 최대 5게임까지 구매 가능합니다.\n\n한국도박문제 관리센터: :telephone: 1336",
 });
