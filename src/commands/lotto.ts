@@ -249,7 +249,7 @@ async function 자동(interaction: CommandInteraction) {
         })
       );
       return;
-    } else if (userdata.lottery.filter((drw) => drw.drwNo === getDrwNo() + 1).length > 5) {
+    } else if (userdata.lottery.filter((drw) => drw.drwNo === getDrwNo() + 1).length >= 5) {
       await interaction.editReply(limitExceededEmbed);
       return;
     }
@@ -311,7 +311,7 @@ async function 수동(interaction: CommandInteraction) {
         })
       );
       return;
-    } else if (userdata.lottery.filter((drw) => drw.drwNo === getDrwNo() + 1).length > 5) {
+    } else if (userdata.lottery.filter((drw) => drw.drwNo === getDrwNo() + 1).length >= 5) {
       await interaction.editReply(limitExceededEmbed);
       return;
     }

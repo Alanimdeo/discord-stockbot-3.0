@@ -1,6 +1,6 @@
 {
   "name": "discord-stockbot-3.0",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "Korean stock bot for Discord using virtual money",
   "scripts": {
     "compile": "tsc",

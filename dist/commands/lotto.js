@@ -201,7 +201,7 @@ async function 자동(interaction) {
             }));
             return;
         }
-        else if (userdata.lottery.filter((drw) => drw.drwNo === (0, lottery_1.getDrwNo)() + 1).length > 5) {
+        else if (userdata.lottery.filter((drw) => drw.drwNo === (0, lottery_1.getDrwNo)() + 1).length >= 5) {
             await interaction.editReply(limitExceededEmbed);
             return;
         }
@@ -259,7 +259,7 @@ async function 수동(interaction) {
             }));
             return;
         }
-        else if (userdata.lottery.filter((drw) => drw.drwNo === (0, lottery_1.getDrwNo)() + 1).length > 5) {
+        else if (userdata.lottery.filter((drw) => drw.drwNo === (0, lottery_1.getDrwNo)() + 1).length >= 5) {
             await interaction.editReply(limitExceededEmbed);
             return;
         }
