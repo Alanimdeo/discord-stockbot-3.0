@@ -60,7 +60,7 @@ async function 송금(interaction: CommandInteraction, bot: Bot) {
   try {
     const target = interaction.options.getUser("대상", true);
     if (!(await verifyUser(target.id))) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -68,6 +68,7 @@ async function 송금(interaction: CommandInteraction, bot: Bot) {
           description: "받을 상대가 가입되어 있지 않습니다.",
         })
       );
+      return;
     }
     const targetUserdata = await getUserdata(target.id);
     const amount = interaction.options.getInteger("금액", true);

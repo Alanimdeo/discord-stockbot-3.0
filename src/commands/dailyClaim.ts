@@ -9,7 +9,7 @@ module.exports = new Command(
   async (interaction: CommandInteraction, bot: Bot) => {
     const user = await getUserdata(interaction.user.id);
     if (isToday(new Date(user.lastClaim))) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -17,6 +17,7 @@ module.exports = new Command(
           description: "오늘 용돈을 이미 받았습니다. 내일 다시 시도하세요.",
         })
       );
+      return;
     }
     const claimedMoney = Math.floor(Math.random() * 130 + 20) * 100;
     await user.money.addMoney(claimedMoney);

@@ -1,16 +1,25 @@
 import { appendFileSync } from "fs";
-import { Client, ClientOptions, Collection, ColorResolvable, EmbedFooterData, MessageEmbed } from "discord.js";
+import {
+  Client,
+  ClientOptions,
+  Collection,
+  ColorResolvable,
+  CommandInteraction,
+  EmbedFooterData,
+  Message,
+  MessageEmbed,
+} from "discord.js";
 import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "@discordjs/builders";
 
 export class Bot extends Client {
   commands: Collection<string, Command>;
-  adminCommands: Collection<string, Command>;
+  adminCommands: Collection<string, AdminCommand>;
   corpList: CorpList;
 
   constructor(options: ClientOptions) {
     super(options);
     this.commands = new Collection<string, Command>();
-    this.adminCommands = new Collection<string, Command>();
+    this.adminCommands = new Collection<string, AdminCommand>();
     this.corpList = {};
   }
 }
@@ -21,9 +30,9 @@ export interface CorpList {
 
 export class Command {
   data: CommandData;
-  execute: Function;
+  execute: (interaction: CommandInteraction, bot: Bot) => Promise<void>;
 
-  constructor(data: CommandData, execute: Function) {
+  constructor(data: CommandData, execute: (interaction: CommandInteraction, bot: Bot) => Promise<void>) {
     this.data = data;
     this.execute = execute;
   }
@@ -32,6 +41,21 @@ export class Command {
 export type CommandData =
   | Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">
   | SlashCommandSubcommandsOnlyBuilder;
+
+export class AdminCommand {
+  data: AdminCommandData;
+  execute: (message: Message, bot: Bot) => Promise<void>;
+
+  constructor(data: AdminCommandData, execute: (message: Message, bot: Bot) => Promise<void>) {
+    this.data = data;
+    this.execute = execute;
+  }
+}
+
+export type AdminCommandData = {
+  name: string;
+  command: string;
+};
 
 export interface Asset {
   amount: number;

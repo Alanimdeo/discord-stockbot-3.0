@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const builders_1 = require("@discordjs/builders");
-const types_1 = require("../types");
 const database_1 = require("../modules/database");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setName("eval").setDescription("명령 실행"), async (message, bot) => {
+const types_1 = require("../types");
+module.exports = new types_1.AdminCommand({ name: "명령 실행", command: "eval" }, async (message, bot) => {
     try {
         const database = {
             getUserdata: database_1.getUserdata,

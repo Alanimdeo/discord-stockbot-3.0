@@ -25,8 +25,8 @@ const adminCommands = fs_1.default
     .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of adminCommands) {
     const command = require(`./adminCommands/${file}`);
-    console.log(`관리자 명령어 불러오는 중... (${command.data.description})`);
-    bot.adminCommands.set(command.data.name, command);
+    console.log(`관리자 명령어 불러오는 중... (${command.data.name})`);
+    bot.adminCommands.set(command.data.command, command);
 }
 bot.once("ready", async () => {
     console.log(`로그인 완료! 토큰: \x1b[32m${config_1.default.token}\x1b[0m`);
@@ -65,7 +65,7 @@ bot.on("interactionCreate", async (interaction) => {
         if (!command)
             return;
         await interaction.deferReply();
-        if (await (0, database_1.verifyUser)(interaction.member.id)) {
+        if ((await (0, database_1.verifyUser)(interaction.member.id)) && interaction instanceof discord_js_1.CommandInteraction) {
             await command.execute(interaction, bot);
         }
         else {

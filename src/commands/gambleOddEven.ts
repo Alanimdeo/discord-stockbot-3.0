@@ -21,11 +21,12 @@ module.exports = new Command(
   async (interaction: CommandInteraction, bot: Bot) => {
     const userdata = await getUserdata(interaction.user.id);
     if (!(await checkDailyLimit(userdata))) {
-      return await interaction.editReply(dailyLimitExceededEmbed);
+      await interaction.editReply(dailyLimitExceededEmbed);
+      return;
     }
     const betMoney = interaction.options.getInteger("금액", true);
     if (userdata.money.amount < betMoney) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -33,6 +34,7 @@ module.exports = new Command(
           description: "가진 돈보다 많이 베팅할 수 없습니다.",
         })
       );
+      return;
     }
     const random = Math.random() >= 0.5 ? "odd" : "even";
     const embedOption: EmbedOption = {

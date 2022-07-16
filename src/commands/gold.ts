@@ -109,7 +109,7 @@ async function 구매(interaction: CommandInteraction, bot: Bot) {
       amount = Math.floor(userdata.money.amount / gold.buy.price);
     }
     if (amount < 1 || userdata.money.amount < gold.buy.price * amount) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -117,6 +117,7 @@ async function 구매(interaction: CommandInteraction, bot: Bot) {
           description: "돈이 부족합니다.",
         })
       );
+      return;
     }
     await userdata.money.reduceMoney(gold.buy.price * amount);
     await userdata.gold.addGold(amount, gold.buy.price);
@@ -147,7 +148,7 @@ async function 판매(interaction: CommandInteraction, bot: Bot) {
       amount = userdata.gold.amount;
     }
     if (amount < 1) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -155,6 +156,7 @@ async function 판매(interaction: CommandInteraction, bot: Bot) {
           description: "0개는 판매할 수 없습니다.",
         })
       );
+      return;
     }
     const gold = await getGoldPrice();
     await userdata.money.addMoney(gold.sell.price * amount);

@@ -100,12 +100,13 @@ async function 당첨확인(interaction, bot) {
     try {
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         if (userdata.lottery.length === 0) {
-            return await interaction.editReply((0, types_1.Embed)({
+            await interaction.editReply((0, types_1.Embed)({
                 color: "#ff0000",
                 icon: "warning",
                 title: "오류",
                 description: "가진 로또가 없습니다.",
             }));
+            return;
         }
         const drwInfos = {};
         const currentDrwNo = (0, lottery_1.getDrwNo)();
@@ -186,17 +187,19 @@ async function 당첨확인(interaction, bot) {
 }
 async function 자동(interaction, bot) {
     if (isPurchaseBlocked()) {
-        return await interaction.editReply(purchaseBlockedEmbed);
+        await interaction.editReply(purchaseBlockedEmbed);
+        return;
     }
     try {
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         if (userdata.money.amount < 1000) {
-            return await interaction.editReply((0, types_1.Embed)({
+            await interaction.editReply((0, types_1.Embed)({
                 color: "#ff0000",
                 icon: "warning",
                 title: "오류",
                 description: "돈이 부족합니다.",
             }));
+            return;
         }
         const numbers = [0, 0, 0, 0, 0, 0];
         while (numbers.includes(0)) {
@@ -242,17 +245,19 @@ function handleError(err) {
 }
 async function 수동(interaction, bot) {
     if (isPurchaseBlocked()) {
-        return await interaction.editReply(purchaseBlockedEmbed);
+        await interaction.editReply(purchaseBlockedEmbed);
+        return;
     }
     try {
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         if (userdata.money.amount < 1000) {
-            return await interaction.editReply((0, types_1.Embed)({
+            await interaction.editReply((0, types_1.Embed)({
                 color: "#ff0000",
                 icon: "warning",
                 title: "오류",
                 description: "돈이 부족합니다.",
             }));
+            return;
         }
         const numbers = [
             interaction.options.getInteger("번호1", true),

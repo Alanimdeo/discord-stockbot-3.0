@@ -73,7 +73,7 @@ async function 내주식(interaction: CommandInteraction, bot: Bot) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     if (Object.keys(userdata.stock.status).length === 0) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -81,6 +81,7 @@ async function 내주식(interaction: CommandInteraction, bot: Bot) {
           description: "보유한 주식이 없습니다.",
         })
       );
+      return;
     }
     let reply = `:information_source: ${(interaction.member as GuildMember).displayName} 님의 주식 상태입니다.\n`;
     const codes = Object.keys(userdata.stock.status);
@@ -119,7 +120,7 @@ async function 구매(interaction: CommandInteraction, bot: Bot) {
       amount = Math.floor(userdata.money.amount / stockInfo.price);
     }
     if (amount < 1 || userdata.money.amount < stockInfo.price * amount) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -127,6 +128,7 @@ async function 구매(interaction: CommandInteraction, bot: Bot) {
           description: "돈이 부족합니다.",
         })
       );
+      return;
     }
     await userdata.money.reduceMoney(stockInfo.price * amount);
     await userdata.stock.addStock(stockInfo.code, amount, stockInfo.price);
@@ -156,7 +158,7 @@ async function 판매(interaction: CommandInteraction, bot: Bot) {
     const userdata = await getUserdata(interaction.user.id);
     const stockInfo = await getStockInfo(corpName, bot.corpList);
     if (!userdata.stock.status[stockInfo.code]) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -164,6 +166,7 @@ async function 판매(interaction: CommandInteraction, bot: Bot) {
           description: "보유한 주식이 없습니다.",
         })
       );
+      return;
     }
     if (amount < 1 || amount > userdata.stock.status[stockInfo.code].amount) {
       amount = userdata.stock.status[stockInfo.code].amount;

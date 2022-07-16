@@ -42,12 +42,13 @@ async function 송금(interaction, bot) {
     try {
         const target = interaction.options.getUser("대상", true);
         if (!(await (0, database_1.verifyUser)(target.id))) {
-            return await interaction.editReply((0, types_1.Embed)({
+            await interaction.editReply((0, types_1.Embed)({
                 color: "#ff0000",
                 icon: "warning",
                 title: "오류",
                 description: "받을 상대가 가입되어 있지 않습니다.",
             }));
+            return;
         }
         const targetUserdata = await (0, database_1.getUserdata)(target.id);
         const amount = interaction.options.getInteger("금액", true);

@@ -133,7 +133,7 @@ async function 당첨확인(interaction: CommandInteraction, bot: Bot) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     if (userdata.lottery.length === 0) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -141,6 +141,7 @@ async function 당첨확인(interaction: CommandInteraction, bot: Bot) {
           description: "가진 로또가 없습니다.",
         })
       );
+      return;
     }
     const drwInfos: {
       [drwNo: number]: DrwInfo;
@@ -233,12 +234,13 @@ async function 당첨확인(interaction: CommandInteraction, bot: Bot) {
 
 async function 자동(interaction: CommandInteraction, bot: Bot) {
   if (isPurchaseBlocked()) {
-    return await interaction.editReply(purchaseBlockedEmbed);
+    await interaction.editReply(purchaseBlockedEmbed);
+    return;
   }
   try {
     const userdata = await getUserdata(interaction.user.id);
     if (userdata.money.amount < 1000) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -246,6 +248,7 @@ async function 자동(interaction: CommandInteraction, bot: Bot) {
           description: "돈이 부족합니다.",
         })
       );
+      return;
     }
     const numbers: LotteryNumbers = [0, 0, 0, 0, 0, 0];
     while (numbers.includes(0)) {
@@ -294,12 +297,13 @@ function handleError(err: unknown) {
 
 async function 수동(interaction: CommandInteraction, bot: Bot) {
   if (isPurchaseBlocked()) {
-    return await interaction.editReply(purchaseBlockedEmbed);
+    await interaction.editReply(purchaseBlockedEmbed);
+    return;
   }
   try {
     const userdata = await getUserdata(interaction.user.id);
     if (userdata.money.amount < 1000) {
-      return await interaction.editReply(
+      await interaction.editReply(
         Embed({
           color: "#ff0000",
           icon: "warning",
@@ -307,6 +311,7 @@ async function 수동(interaction: CommandInteraction, bot: Bot) {
           description: "돈이 부족합니다.",
         })
       );
+      return;
     }
     const numbers: LotteryNumbers = [
       interaction.options.getInteger("번호1", true),

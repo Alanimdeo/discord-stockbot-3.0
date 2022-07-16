@@ -15,16 +15,18 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .addIntegerOption((option) => option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setMinValue(1).setRequired(true)), async (interaction, bot) => {
     const userdata = await (0, database_1.getUserdata)(interaction.user.id);
     if (!(await (0, gamble_1.checkDailyLimit)(userdata))) {
-        return await interaction.editReply(gamble_1.dailyLimitExceededEmbed);
+        await interaction.editReply(gamble_1.dailyLimitExceededEmbed);
+        return;
     }
     const betMoney = interaction.options.getInteger("금액", true);
     if (userdata.money.amount < betMoney) {
-        return await interaction.editReply((0, types_1.Embed)({
+        await interaction.editReply((0, types_1.Embed)({
             color: "#ff0000",
             icon: "warning",
             title: "오류",
             description: "가진 돈보다 많이 베팅할 수 없습니다.",
         }));
+        return;
     }
     const random = Math.random() >= 0.5 ? "odd" : "even";
     const embedOption = {

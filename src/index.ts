@@ -3,8 +3,8 @@ import fs from "fs";
 import download from "download";
 import xlsx from "xlsx";
 import iconv from "iconv-lite";
-import { GuildMember, Intents, Interaction, Message } from "discord.js";
-import { Bot, Command, CorpList, Embed } from "./types";
+import { CommandInteraction, GuildMember, Intents, Interaction, Message } from "discord.js";
+import { AdminCommand, Bot, Command, CorpList, Embed } from "./types";
 
 console.log("설정 불러오는 중...");
 import config from "./config";
@@ -23,9 +23,9 @@ const adminCommands = fs
   .readdirSync("./adminCommands")
   .filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of adminCommands) {
-  const command: Command = require(`./adminCommands/${file}`);
-  console.log(`관리자 명령어 불러오는 중... (${command.data.description})`);
-  bot.adminCommands.set(command.data.name, command);
+  const command: AdminCommand = require(`./adminCommands/${file}`);
+  console.log(`관리자 명령어 불러오는 중... (${command.data.name})`);
+  bot.adminCommands.set(command.data.command, command);
 }
 
 bot.once("ready", async () => {
@@ -66,7 +66,7 @@ bot.on("interactionCreate", async (interaction: Interaction) => {
     if (!command) return;
 
     await interaction.deferReply();
-    if (await verifyUser((interaction.member as GuildMember).id)) {
+    if ((await verifyUser((interaction.member as GuildMember).id)) && interaction instanceof CommandInteraction) {
       await command.execute(interaction, bot);
     } else {
       await interaction.editReply(

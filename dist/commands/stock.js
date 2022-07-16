@@ -51,12 +51,13 @@ async function 내주식(interaction, bot) {
     try {
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         if (Object.keys(userdata.stock.status).length === 0) {
-            return await interaction.editReply((0, types_1.Embed)({
+            await interaction.editReply((0, types_1.Embed)({
                 color: "#ff0000",
                 icon: "warning",
                 title: "오류",
                 description: "보유한 주식이 없습니다.",
             }));
+            return;
         }
         let reply = `:information_source: ${interaction.member.displayName} 님의 주식 상태입니다.\n`;
         const codes = Object.keys(userdata.stock.status);
@@ -87,12 +88,13 @@ async function 구매(interaction, bot) {
             amount = Math.floor(userdata.money.amount / stockInfo.price);
         }
         if (amount < 1 || userdata.money.amount < stockInfo.price * amount) {
-            return await interaction.editReply((0, types_1.Embed)({
+            await interaction.editReply((0, types_1.Embed)({
                 color: "#ff0000",
                 icon: "warning",
                 title: "오류",
                 description: "돈이 부족합니다.",
             }));
+            return;
         }
         await userdata.money.reduceMoney(stockInfo.price * amount);
         await userdata.stock.addStock(stockInfo.code, amount, stockInfo.price);
@@ -114,12 +116,13 @@ async function 판매(interaction, bot) {
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         const stockInfo = await (0, stock_1.getStockInfo)(corpName, bot.corpList);
         if (!userdata.stock.status[stockInfo.code]) {
-            return await interaction.editReply((0, types_1.Embed)({
+            await interaction.editReply((0, types_1.Embed)({
                 color: "#ff0000",
                 icon: "warning",
                 title: "오류",
                 description: "보유한 주식이 없습니다.",
             }));
+            return;
         }
         if (amount < 1 || amount > userdata.stock.status[stockInfo.code].amount) {
             amount = userdata.stock.status[stockInfo.code].amount;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorLog = exports.Embed = exports.Command = exports.Bot = void 0;
+exports.errorLog = exports.Embed = exports.AdminCommand = exports.Command = exports.Bot = void 0;
 const fs_1 = require("fs");
 const discord_js_1 = require("discord.js");
 class Bot extends discord_js_1.Client {
@@ -24,6 +24,15 @@ class Command {
     }
 }
 exports.Command = Command;
+class AdminCommand {
+    data;
+    execute;
+    constructor(data, execute) {
+        this.data = data;
+        this.execute = execute;
+    }
+}
+exports.AdminCommand = AdminCommand;
 function Embed(option) {
     const embed = new discord_js_1.MessageEmbed();
     embed.setColor(option.color);
