@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildMember } from "discord.js";
 import { getUserdata } from "../modules/database";
 import { addLottery, DrwInfo, getDrwInfo, getDrwNo, Lottery, LotteryNumbers } from "../modules/lottery";
-import { Bot, Command, Embed, EmbedOption } from "../types";
+import { Command, Embed, EmbedOption } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder()

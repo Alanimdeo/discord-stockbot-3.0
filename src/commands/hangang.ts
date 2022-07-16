@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 import { CommandInteraction } from "discord.js";
-import { Bot, Command, Embed } from "../types";
+import { Command, Embed } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder().setName("한강").setDescription("한강 수온을 확인합니다."),

@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { getUserdata } from "../modules/database";
-import { AdminCommand, Bot } from "../types";
+import { AdminCommand } from "../types";
 
 module.exports = new AdminCommand({ name: "돈", command: "money" }, async (message: Message) => {
   const command = message.content.split(" ");

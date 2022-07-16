@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { getUserdata } from "../modules/database";
 import { checkDailyLimit, dailyLimitExceededEmbed } from "../modules/gamble";
-import { Bot, Command, Embed, EmbedOption } from "../types";
+import { Command, Embed, EmbedOption } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder()

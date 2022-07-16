@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { getUserdata } from "../modules/database";
 import { isToday, toDateString } from "../modules/time";
-import { Bot, Command, Embed } from "../types";
+import { Command, Embed } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder().setName("용돈").setDescription("용돈을 받습니다. 하루에 1회 받을 수 있습니다."),

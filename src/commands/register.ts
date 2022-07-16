@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { createUser } from "../modules/database";
-import { Bot, Command, Embed } from "../types";
+import { Command, Embed } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder().setName("가입").setDescription("주식 서버에 가입합니다. 최초 1회만 필요합니다."),
