@@ -131,7 +131,7 @@ async function 회차확인(interaction: CommandInteraction, bot: Bot) {
 
 async function 당첨확인(interaction: CommandInteraction, bot: Bot) {
   try {
-    let userdata = await getUserdata(interaction.user.id);
+    const userdata = await getUserdata(interaction.user.id);
     if (userdata.lottery.length === 0) {
       return await interaction.editReply(
         Embed({

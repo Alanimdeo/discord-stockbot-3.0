@@ -98,7 +98,7 @@ async function 회차확인(interaction, bot) {
 }
 async function 당첨확인(interaction, bot) {
     try {
-        let userdata = await (0, database_1.getUserdata)(interaction.user.id);
+        const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         if (userdata.lottery.length === 0) {
             return await interaction.editReply((0, types_1.Embed)({
                 color: "#ff0000",
