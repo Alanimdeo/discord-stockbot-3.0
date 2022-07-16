@@ -12,7 +12,7 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setDescription("홀 또는 짝을 선택하세요.")
     .addChoices({ name: "홀", value: "odd" }, { name: "짝", value: "even" })
     .setRequired(true))
-    .addIntegerOption((option) => option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setMinValue(1).setRequired(true)), async (interaction, bot) => {
+    .addIntegerOption((option) => option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setMinValue(1).setRequired(true)), async (interaction) => {
     const userdata = await (0, database_1.getUserdata)(interaction.user.id);
     if (!(await (0, gamble_1.checkDailyLimit)(userdata))) {
         await interaction.editReply(gamble_1.dailyLimitExceededEmbed);

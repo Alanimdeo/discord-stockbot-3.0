@@ -34,12 +34,12 @@ module.exports = new Command(
             .setRequired(true)
         )
     ),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: CommandInteraction) => {
     return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
   }
 );
 
-async function 시세(interaction: CommandInteraction, bot: Bot) {
+async function 시세(interaction: CommandInteraction) {
   const price = await getGoldPrice();
   let buyPriceDiff: string = price.buy.diff;
   if (buyPriceDiff === "0") {
@@ -70,7 +70,7 @@ async function 시세(interaction: CommandInteraction, bot: Bot) {
   );
 }
 
-async function 확인(interaction: CommandInteraction, bot: Bot) {
+async function 확인(interaction: CommandInteraction) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     let gold: GoldPriceInfo | null = null;
@@ -100,7 +100,7 @@ async function 확인(interaction: CommandInteraction, bot: Bot) {
   }
 }
 
-async function 구매(interaction: CommandInteraction, bot: Bot) {
+async function 구매(interaction: CommandInteraction) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     const gold = await getGoldPrice();
@@ -140,7 +140,7 @@ async function 구매(interaction: CommandInteraction, bot: Bot) {
   }
 }
 
-async function 판매(interaction: CommandInteraction, bot: Bot) {
+async function 판매(interaction: CommandInteraction) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     let amount = interaction.options.getInteger("수량", true);

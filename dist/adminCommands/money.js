@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../modules/database");
 const types_1 = require("../types");
-module.exports = new types_1.AdminCommand({ name: "돈", command: "money" }, async (message, bot) => {
+module.exports = new types_1.AdminCommand({ name: "돈", command: "money" }, async (message) => {
     const command = message.content.split(" ");
     command.shift();
     command.shift();

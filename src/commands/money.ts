@@ -56,7 +56,7 @@ async function 확인(interaction: CommandInteraction, bot: Bot) {
   }
 }
 
-async function 송금(interaction: CommandInteraction, bot: Bot) {
+async function 송금(interaction: CommandInteraction) {
   try {
     const target = interaction.options.getUser("대상", true);
     if (!(await verifyUser(target.id))) {

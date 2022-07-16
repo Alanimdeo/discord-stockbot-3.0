@@ -54,10 +54,10 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setDescription("여섯 번째 번호를 입력하세요.")
     .setMinValue(1)
     .setMaxValue(45)
-    .setRequired(true)))), async (interaction, bot) => {
+    .setRequired(true)))), async (interaction) => {
     return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
 });
-async function 회차확인(interaction, bot) {
+async function 회차확인(interaction) {
     try {
         const drwInfo = await (0, lottery_1.getDrwInfo)(interaction.options.getInteger("회차") || undefined);
         await interaction.editReply((0, types_1.Embed)({
@@ -96,7 +96,7 @@ async function 회차확인(interaction, bot) {
         }
     }
 }
-async function 당첨확인(interaction, bot) {
+async function 당첨확인(interaction) {
     try {
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         if (userdata.lottery.length === 0) {
@@ -185,7 +185,7 @@ async function 당첨확인(interaction, bot) {
         }));
     }
 }
-async function 자동(interaction, bot) {
+async function 자동(interaction) {
     if (isPurchaseBlocked()) {
         await interaction.editReply(purchaseBlockedEmbed);
         return;
@@ -243,7 +243,7 @@ function handleError(err) {
     }
     return (0, types_1.Embed)(embedOption);
 }
-async function 수동(interaction, bot) {
+async function 수동(interaction) {
     if (isPurchaseBlocked()) {
         await interaction.editReply(purchaseBlockedEmbed);
         return;

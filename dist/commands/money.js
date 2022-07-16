@@ -38,7 +38,7 @@ async function 확인(interaction, bot) {
         await interaction.editReply((0, types_1.Embed)(handleError(err)));
     }
 }
-async function 송금(interaction, bot) {
+async function 송금(interaction) {
     try {
         const target = interaction.options.getUser("대상", true);
         if (!(await (0, database_1.verifyUser)(target.id))) {

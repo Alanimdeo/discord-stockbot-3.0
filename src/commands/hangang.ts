@@ -5,7 +5,7 @@ import { Bot, Command, Embed } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder().setName("한강").setDescription("한강 수온을 확인합니다."),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: CommandInteraction) => {
     try {
       const response = await axios("http://hangang.dkserver.wo.tc");
       await interaction.editReply(

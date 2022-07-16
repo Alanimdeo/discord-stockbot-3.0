@@ -5,7 +5,7 @@ import { Bot, Command, Embed } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder().setName("가입").setDescription("주식 서버에 가입합니다. 최초 1회만 필요합니다."),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: CommandInteraction) => {
     try {
       await createUser(interaction.user.id);
       await interaction.editReply(

@@ -18,7 +18,7 @@ module.exports = new Command(
     .addIntegerOption((option) =>
       option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setMinValue(1).setRequired(true)
     ),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: CommandInteraction) => {
     const userdata = await getUserdata(interaction.user.id);
     if (!(await checkDailyLimit(userdata))) {
       await interaction.editReply(dailyLimitExceededEmbed);

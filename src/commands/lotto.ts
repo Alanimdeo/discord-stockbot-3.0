@@ -78,12 +78,12 @@ module.exports = new Command(
             )
         )
     ),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: CommandInteraction) => {
     return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
   }
 );
 
-async function 회차확인(interaction: CommandInteraction, bot: Bot) {
+async function 회차확인(interaction: CommandInteraction) {
   try {
     const drwInfo = await getDrwInfo(interaction.options.getInteger("회차") || undefined);
     await interaction.editReply(
@@ -129,7 +129,7 @@ async function 회차확인(interaction: CommandInteraction, bot: Bot) {
   }
 }
 
-async function 당첨확인(interaction: CommandInteraction, bot: Bot) {
+async function 당첨확인(interaction: CommandInteraction) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     if (userdata.lottery.length === 0) {
@@ -232,7 +232,7 @@ async function 당첨확인(interaction: CommandInteraction, bot: Bot) {
   }
 }
 
-async function 자동(interaction: CommandInteraction, bot: Bot) {
+async function 자동(interaction: CommandInteraction) {
   if (isPurchaseBlocked()) {
     await interaction.editReply(purchaseBlockedEmbed);
     return;
@@ -295,7 +295,7 @@ function handleError(err: unknown) {
   return Embed(embedOption);
 }
 
-async function 수동(interaction: CommandInteraction, bot: Bot) {
+async function 수동(interaction: CommandInteraction) {
   if (isPurchaseBlocked()) {
     await interaction.editReply(purchaseBlockedEmbed);
     return;

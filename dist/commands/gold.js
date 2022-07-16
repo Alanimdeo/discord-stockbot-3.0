@@ -24,10 +24,10 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setName("수량")
     .setDescription("수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
     .setMinValue(0)
-    .setRequired(true))), async (interaction, bot) => {
+    .setRequired(true))), async (interaction) => {
     return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
 });
-async function 시세(interaction, bot) {
+async function 시세(interaction) {
     const price = await (0, gold_1.getGoldPrice)();
     let buyPriceDiff = price.buy.diff;
     if (buyPriceDiff === "0") {
@@ -57,7 +57,7 @@ async function 시세(interaction, bot) {
         footer: { text: `최근 갱신: ${price.buy.time}` },
     }));
 }
-async function 확인(interaction, bot) {
+async function 확인(interaction) {
     try {
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         let gold = null;
@@ -81,7 +81,7 @@ async function 확인(interaction, bot) {
         await interaction.editReply((0, types_1.Embed)(handleError(err)));
     }
 }
-async function 구매(interaction, bot) {
+async function 구매(interaction) {
     try {
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         const gold = await (0, gold_1.getGoldPrice)();
@@ -111,7 +111,7 @@ async function 구매(interaction, bot) {
         await interaction.editReply((0, types_1.Embed)(handleError(err)));
     }
 }
-async function 판매(interaction, bot) {
+async function 판매(interaction) {
     try {
         const userdata = await (0, database_1.getUserdata)(interaction.user.id);
         let amount = interaction.options.getInteger("수량", true);
