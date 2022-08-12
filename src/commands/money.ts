@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
 import { getUserdata, verifyUser } from "../modules/database";
 import { getGoldPrice } from "../modules/gold";
 import { getStockInfo } from "../modules/stock";
@@ -21,12 +20,12 @@ module.exports = new Command(
           option.setName("금액").setDescription("보낼 금액을 입력하세요.").setMinValue(1).setRequired(true)
         )
     ),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
   }
 );
 
-async function 확인(interaction: CommandInteraction, bot: Bot) {
+async function 확인(interaction: ChatInputCommandInteraction, bot: Bot) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     let stockMoney = 0;
@@ -56,7 +55,7 @@ async function 확인(interaction: CommandInteraction, bot: Bot) {
   }
 }
 
-async function 송금(interaction: CommandInteraction) {
+async function 송금(interaction: ChatInputCommandInteraction) {
   try {
     const target = interaction.options.getUser("대상", true);
     if (!(await verifyUser(target.id))) {

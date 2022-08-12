@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const database_1 = require("../modules/database");
 const gamble_1 = require("../modules/gamble");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("홀짝")
     .setDescription("홀과 짝 중 하나를 선택하여 맞출 경우 건 돈의 1.5배를 획득합니다.")
     .addStringOption((option) => option

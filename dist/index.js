@@ -13,7 +13,9 @@ const types_1 = require("./types");
 console.log("설정 불러오는 중...");
 const config_1 = __importDefault(require("./config"));
 const database_1 = require("./modules/database");
-const bot = new types_1.Bot({ intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES] });
+const bot = new types_1.Bot({
+    intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent],
+});
 const commands = fs_1.default.readdirSync("./commands").filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of commands) {
     const command = require(`./commands/${file}`);
@@ -65,7 +67,8 @@ bot.on("interactionCreate", async (interaction) => {
         if (!command)
             return;
         await interaction.deferReply();
-        if ((await (0, database_1.verifyUser)(interaction.member.id)) && interaction instanceof discord_js_1.CommandInteraction) {
+        if ((await (0, database_1.verifyUser)(interaction.member.id)) &&
+            interaction instanceof discord_js_1.ChatInputCommandInteraction) {
             await command.execute(interaction, bot);
         }
         else {

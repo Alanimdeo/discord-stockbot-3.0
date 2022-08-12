@@ -1,11 +1,10 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { createUser } from "../modules/database";
 import { Command, Embed } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder().setName("가입").setDescription("주식 서버에 가입합니다. 최초 1회만 필요합니다."),
-  async (interaction: CommandInteraction) => {
+  async (interaction: ChatInputCommandInteraction) => {
     try {
       await createUser(interaction.user.id);
       await interaction.editReply(

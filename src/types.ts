@@ -4,12 +4,13 @@ import {
   ClientOptions,
   Collection,
   ColorResolvable,
-  CommandInteraction,
+  ChatInputCommandInteraction,
+  EmbedBuilder,
   EmbedFooterData,
   Message,
-  MessageEmbed,
+  SlashCommandBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
 } from "discord.js";
-import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "@discordjs/builders";
 
 export class Bot extends Client {
   commands: Collection<string, Command>;
@@ -30,9 +31,9 @@ export interface CorpList {
 
 export class Command {
   data: CommandData;
-  execute: (interaction: CommandInteraction, bot: Bot) => Promise<void>;
+  execute: (interaction: ChatInputCommandInteraction, bot: Bot) => Promise<void>;
 
-  constructor(data: CommandData, execute: (interaction: CommandInteraction, bot: Bot) => Promise<void>) {
+  constructor(data: CommandData, execute: (interaction: ChatInputCommandInteraction, bot: Bot) => Promise<void>) {
     this.data = data;
     this.execute = execute;
   }
@@ -77,7 +78,7 @@ export interface EmbedOption {
 }
 
 export function Embed(option: EmbedOption) {
-  const embed = new MessageEmbed();
+  const embed = new EmbedBuilder();
   embed.setColor(option.color);
   embed.setTitle(option.icon ? `:${option.icon}: ${option.title}` : option.title);
   embed.setDescription(option.description);

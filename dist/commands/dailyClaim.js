@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const database_1 = require("../modules/database");
 const time_1 = require("../modules/time");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setName("용돈").setDescription("용돈을 받습니다. 하루에 1회 받을 수 있습니다."), async (interaction) => {
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder().setName("용돈").setDescription("용돈을 받습니다. 하루에 1회 받을 수 있습니다."), async (interaction) => {
     const user = await (0, database_1.getUserdata)(interaction.user.id);
     if ((0, time_1.isToday)(new Date(user.lastClaim))) {
         await interaction.editReply((0, types_1.Embed)({

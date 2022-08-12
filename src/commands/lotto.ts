@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
 import { getUserdata } from "../modules/database";
 import { addLottery, DrwInfo, getDrwInfo, getDrwNo, Lottery, LotteryNumbers } from "../modules/lottery";
 import { Command, Embed, EmbedOption } from "../types";
@@ -78,12 +77,12 @@ module.exports = new Command(
             )
         )
     ),
-  async (interaction: CommandInteraction) => {
+  async (interaction: ChatInputCommandInteraction) => {
     return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction)})()`);
   }
 );
 
-async function 회차확인(interaction: CommandInteraction) {
+async function 회차확인(interaction: ChatInputCommandInteraction) {
   try {
     const drwInfo = await getDrwInfo(interaction.options.getInteger("회차") || undefined);
     await interaction.editReply(
@@ -129,7 +128,7 @@ async function 회차확인(interaction: CommandInteraction) {
   }
 }
 
-async function 당첨확인(interaction: CommandInteraction) {
+async function 당첨확인(interaction: ChatInputCommandInteraction) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     if (userdata.lottery.length === 0) {
@@ -232,7 +231,7 @@ async function 당첨확인(interaction: CommandInteraction) {
   }
 }
 
-async function 자동(interaction: CommandInteraction) {
+async function 자동(interaction: ChatInputCommandInteraction) {
   if (isPurchaseBlocked()) {
     await interaction.editReply(purchaseBlockedEmbed);
     return;
@@ -294,7 +293,7 @@ function handleError(err: unknown) {
   return Embed(embedOption);
 }
 
-async function 수동(interaction: CommandInteraction) {
+async function 수동(interaction: ChatInputCommandInteraction) {
   if (isPurchaseBlocked()) {
     await interaction.editReply(purchaseBlockedEmbed);
     return;

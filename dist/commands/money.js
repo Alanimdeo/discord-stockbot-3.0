@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const database_1 = require("../modules/database");
 const gold_1 = require("../modules/gold");
 const stock_1 = require("../modules/stock");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("돈")
     .setDescription("돈 관련 명령어")
     .addSubcommand((command) => command.setName("확인").setDescription("가진 돈과 자산을 확인합니다."))

@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
 import { getUserdata } from "../modules/database";
 import { getStockInfo } from "../modules/stock";
 import { Bot, Command, Embed, EmbedOption, errorLog } from "../types";
@@ -47,12 +46,12 @@ module.exports = new Command(
             .setRequired(true)
         )
     ),
-  async (interaction: CommandInteraction, bot: Bot) => {
+  async (interaction: ChatInputCommandInteraction, bot: Bot) => {
     return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
   }
 );
 
-async function 확인(interaction: CommandInteraction, bot: Bot) {
+async function 확인(interaction: ChatInputCommandInteraction, bot: Bot) {
   try {
     const stockInfo = await getStockInfo(interaction.options.getString("회사명", true), bot.corpList);
     await interaction.editReply(
@@ -69,7 +68,7 @@ async function 확인(interaction: CommandInteraction, bot: Bot) {
   }
 }
 
-async function 내주식(interaction: CommandInteraction, bot: Bot) {
+async function 내주식(interaction: ChatInputCommandInteraction, bot: Bot) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     if (Object.keys(userdata.stock.status).length === 0) {
@@ -110,7 +109,7 @@ async function 내주식(interaction: CommandInteraction, bot: Bot) {
   }
 }
 
-async function 구매(interaction: CommandInteraction, bot: Bot) {
+async function 구매(interaction: ChatInputCommandInteraction, bot: Bot) {
   try {
     const corpName = interaction.options.getString("회사명", true);
     let amount = interaction.options.getInteger("수량", true);
@@ -151,7 +150,7 @@ async function 구매(interaction: CommandInteraction, bot: Bot) {
   }
 }
 
-async function 판매(interaction: CommandInteraction, bot: Bot) {
+async function 판매(interaction: ChatInputCommandInteraction, bot: Bot) {
   try {
     const corpName = interaction.options.getString("회사명", true);
     let amount = interaction.options.getInteger("수량", true);
