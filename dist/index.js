@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-console.log("모듈 로딩 중...");
+console.log(`봇 로딩 중... 가동 시각: ${new Date().toLocaleString()}\n모듈 로딩 중...`);
 const fs_1 = __importDefault(require("fs"));
 const download_1 = __importDefault(require("download"));
 const xlsx_1 = __importDefault(require("xlsx"));
@@ -67,8 +67,8 @@ bot.on("interactionCreate", async (interaction) => {
         if (!command)
             return;
         await interaction.deferReply();
-        if ((await (0, database_1.verifyUser)(interaction.member.id)) &&
-            interaction instanceof discord_js_1.ChatInputCommandInteraction) {
+        if (interaction instanceof discord_js_1.ChatInputCommandInteraction &&
+            (await (0, database_1.verifyUser)(interaction.member.id))) {
             await command.execute(interaction, bot);
         }
         else {

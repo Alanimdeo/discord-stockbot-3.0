@@ -1,4 +1,4 @@
-console.log("모듈 로딩 중...");
+console.log(`봇 로딩 중... 가동 시각: ${new Date().toLocaleString()}\n모듈 로딩 중...`);
 import fs from "fs";
 import download from "download";
 import xlsx from "xlsx";
@@ -69,8 +69,8 @@ bot.on("interactionCreate", async (interaction: Interaction) => {
 
     await interaction.deferReply();
     if (
-      (await verifyUser((interaction.member as GuildMember).id)) &&
-      interaction instanceof ChatInputCommandInteraction
+      interaction instanceof ChatInputCommandInteraction &&
+      (await verifyUser((interaction.member as GuildMember).id))
     ) {
       await command.execute(interaction, bot);
     } else {
