@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const database_1 = require("../modules/database");
 const gold_1 = require("../modules/gold");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .setName("금")
     .setDescription("금 관련 명령어")
     .addSubcommand((command) => command.setName("시세").setDescription("금 시세를 확인합니다."))
@@ -25,7 +25,8 @@ module.exports = new types_1.Command(new builders_1.SlashCommandBuilder()
     .setDescription("수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
     .setMinValue(0)
     .setRequired(true))), async (interaction) => {
-    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction)})()`);
+    console.log(interaction.options);
+    // return await eval(`(async () => {${interaction.options}(interaction)})()`);
 });
 async function 시세(interaction) {
     const price = await (0, gold_1.getGoldPrice)();

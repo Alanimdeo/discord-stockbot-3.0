@@ -34,7 +34,7 @@ class AdminCommand {
 }
 exports.AdminCommand = AdminCommand;
 function Embed(option) {
-    const embed = new discord_js_1.MessageEmbed();
+    const embed = new discord_js_1.EmbedBuilder();
     embed.setColor(option.color);
     embed.setTitle(option.icon ? `:${option.icon}: ${option.title}` : option.title);
     embed.setDescription(option.description);

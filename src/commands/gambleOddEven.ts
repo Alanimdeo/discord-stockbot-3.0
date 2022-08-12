@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { getUserdata } from "../modules/database";
 import { checkDailyLimit, dailyLimitExceededEmbed } from "../modules/gamble";
 import { Command, Embed, EmbedOption } from "../types";
@@ -18,7 +17,7 @@ module.exports = new Command(
     .addIntegerOption((option) =>
       option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setMinValue(1).setRequired(true)
     ),
-  async (interaction: CommandInteraction) => {
+  async (interaction: ChatInputCommandInteraction) => {
     const userdata = await getUserdata(interaction.user.id);
     if (!(await checkDailyLimit(userdata))) {
       await interaction.editReply(dailyLimitExceededEmbed);

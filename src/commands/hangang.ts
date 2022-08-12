@@ -1,11 +1,10 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
 import axios from "axios";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command, Embed } from "../types";
 
 module.exports = new Command(
   new SlashCommandBuilder().setName("한강").setDescription("한강 수온을 확인합니다."),
-  async (interaction: CommandInteraction) => {
+  async (interaction: ChatInputCommandInteraction) => {
     try {
       const response = await axios("http://hangang.dkserver.wo.tc");
       await interaction.editReply(

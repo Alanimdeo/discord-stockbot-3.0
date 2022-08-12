@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
 import { getUserdata } from "../modules/database";
 import { getGoldPrice, GoldPriceInfo } from "../modules/gold";
 import { Command, Embed, EmbedOption, errorLog } from "../types";
@@ -34,12 +33,13 @@ module.exports = new Command(
             .setRequired(true)
         )
     ),
-  async (interaction: CommandInteraction) => {
-    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction)})()`);
+  async (interaction: ChatInputCommandInteraction) => {
+    console.log(interaction.options);
+    // return await eval(`(async () => {${interaction.options}(interaction)})()`);
   }
 );
 
-async function 시세(interaction: CommandInteraction) {
+async function 시세(interaction: ChatInputCommandInteraction) {
   const price = await getGoldPrice();
   let buyPriceDiff: string = price.buy.diff;
   if (buyPriceDiff === "0") {
@@ -70,7 +70,7 @@ async function 시세(interaction: CommandInteraction) {
   );
 }
 
-async function 확인(interaction: CommandInteraction) {
+async function 확인(interaction: ChatInputCommandInteraction) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     let gold: GoldPriceInfo | null = null;
@@ -100,7 +100,7 @@ async function 확인(interaction: CommandInteraction) {
   }
 }
 
-async function 구매(interaction: CommandInteraction) {
+async function 구매(interaction: ChatInputCommandInteraction) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     const gold = await getGoldPrice();
@@ -140,7 +140,7 @@ async function 구매(interaction: CommandInteraction) {
   }
 }
 
-async function 판매(interaction: CommandInteraction) {
+async function 판매(interaction: ChatInputCommandInteraction) {
   try {
     const userdata = await getUserdata(interaction.user.id);
     let amount = interaction.options.getInteger("수량", true);

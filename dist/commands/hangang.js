@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const builders_1 = require("@discordjs/builders");
 const axios_1 = __importDefault(require("axios"));
+const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
-module.exports = new types_1.Command(new builders_1.SlashCommandBuilder().setName("한강").setDescription("한강 수온을 확인합니다."), async (interaction) => {
+module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder().setName("한강").setDescription("한강 수온을 확인합니다."), async (interaction) => {
     try {
         const response = await (0, axios_1.default)("http://hangang.dkserver.wo.tc");
         await interaction.editReply((0, types_1.Embed)({
