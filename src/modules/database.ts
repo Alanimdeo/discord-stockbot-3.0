@@ -49,7 +49,7 @@ export async function createUser(userId: string): Promise<User> {
   if (await verifyUser(userId)) {
     throw new Error("UserAlreadyExists");
   }
-  query("INSERT INTO users (id, stock, lottery, gamble, lastClaim) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+  query("INSERT INTO users (id, stock, lottery, gamble, lastClaim) VALUES (?, ?, ?, ?, ?)", [
     userId,
     "{}",
     "[]",
