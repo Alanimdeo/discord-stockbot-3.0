@@ -69,8 +69,11 @@ bot.on("interactionCreate", async (interaction: Interaction) => {
 
     await interaction.deferReply();
     if (
-      (await verifyUser((interaction.member as GuildMember).id)) &&
-      interaction instanceof ChatInputCommandInteraction
+      interaction instanceof ChatInputCommandInteraction &&
+      (
+        interaction.commandName === "가입" ||
+        (await verifyUser((interaction.member as GuildMember).id))
+      )
     ) {
       await command.execute(interaction, bot);
     } else {
