@@ -67,8 +67,9 @@ bot.on("interactionCreate", async (interaction) => {
         if (!command)
             return;
         await interaction.deferReply();
-        if ((await (0, database_1.verifyUser)(interaction.member.id)) &&
-            interaction instanceof discord_js_1.ChatInputCommandInteraction) {
+        if (interaction instanceof discord_js_1.ChatInputCommandInteraction &&
+            (interaction.commandName === "가입" ||
+                (await (0, database_1.verifyUser)(interaction.member.id)))) {
             await command.execute(interaction, bot);
         }
         else {

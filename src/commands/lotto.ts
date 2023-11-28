@@ -105,13 +105,13 @@ async function 회차확인(interaction: ChatInputCommandInteraction) {
         color: "#ff0000",
         icon: "warning",
         title: "오류",
-        description: err.message + (err.cause?.message || ""),
+        description: err.message + (err.cause || ""),
       };
       switch (err.message) {
         case "NotDrawnYet":
-          if (err.cause?.message === "ExceedsLatestDrw") {
+          if (err.cause === "ExceedsLatestDrw") {
             embedOption.description = "아직 추첨하지 않은 회차입니다.";
-          } else if (err.cause?.message === "Saturday") {
+          } else if (err.cause === "Saturday") {
             embedOption.description =
               "아직 추첨이 진행되지 않았습니다. 추첨 방송 종료 후 최대 1시간까지 반영이 지연될 수 있으니, 잠시 후 다시 시도하세요.";
           }

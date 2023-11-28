@@ -129,8 +129,8 @@ export async function getStockInfo(query: string, corpList: CorpList): Promise<S
   data = data.result.areas[0].datas[0];
 
   return {
-    name: data.nm,
-    code: data.cd,
+    name,
+    code,
     price: data.nv,
     risefall: getRiseFall(data.rf),
     diff: data.cv,

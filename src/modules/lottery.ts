@@ -76,7 +76,7 @@ export class DrwInfo {
 
 export async function getDrwInfo(drwNo: number = getDrwNo(), getPrize: boolean = false): Promise<DrwInfo> {
   if (drwNo > getDrwNo()) {
-    throw new Error("NotDrawnYet", { cause: new Error("ExceedsLatestDrw") });
+    throw new Error("NotDrawnYet", { cause: "ExceedsLatestDrw" });
   } else if (drwNo < 1) {
     throw new Error("IllegalDrwNo");
   }
@@ -102,7 +102,7 @@ export async function getDrwInfo(drwNo: number = getDrwNo(), getPrize: boolean =
     return drwInfo;
   } else {
     if (drwNo === getDrwNo()) {
-      throw new Error("NotDrawnYet", { cause: new Error("Saturday") });
+      throw new Error("NotDrawnYet", { cause: "Saturday" });
     }
     throw new Error("DrwInfoFetchFailed");
   }

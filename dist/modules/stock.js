@@ -75,6 +75,25 @@ class UserStock {
 }
 exports.UserStock = UserStock;
 const updateStock = async (user, stock) => await user.update([{ key: "stock", value: JSON.stringify(stock) }]);
+const getRiseFall = (rf) => {
+    if (typeof rf === "number") {
+        rf = String(rf);
+    }
+    switch (rf) {
+        case "1":
+            return "upperLimit";
+        case "2":
+            return "up";
+        case "3":
+            return "unchanged";
+        case "4":
+            return "down";
+        case "5":
+            return "lowerLimit";
+        default:
+            throw new Error("InvalidRiseFall");
+    }
+};
 async function getStockInfo(query, corpList) {
     let code = "", name = "";
     if (isNaN(Number(query)) && Object.keys(corpList).includes(query)) {
@@ -88,29 +107,21 @@ async function getStockInfo(query, corpList) {
     else {
         throw new Error("ResultNotFound");
     }
-    const response = await (0, axios_1.default)(`http://api.finance.naver.com/service/itemSummary.nhn?itemcode=${code}`);
-    const data = response.data;
+    const response = await (0, axios_1.default)(`https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:${code}`);
+    let data = response.data;
     if (response.status !== 200 || !data) {
         throw new Error("StockFetchFailed");
     }
-    const risefall = data.risefall === 1
-        ? "upperLimit"
-        : data.risefall === 2
-            ? "up"
-            : data.risefall === 3
-                ? "unchanged"
-                : data.risefall === 4
-                    ? "lowerLimit"
-                    : "down";
+    data = data.result.areas[0].datas[0];
     return {
         name,
         code,
-        price: data.now,
-        risefall,
-        diff: data.diff,
-        diffRate: data.rate,
-        high: data.high,
-        low: data.low,
+        price: data.nv,
+        risefall: getRiseFall(data.rf),
+        diff: data.cv,
+        diffRate: data.cr,
+        high: data.hv,
+        low: data.lv,
     };
 }
 exports.getStockInfo = getStockInfo;

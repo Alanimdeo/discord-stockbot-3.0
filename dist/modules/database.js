@@ -44,7 +44,7 @@ async function createUser(userId) {
     if (await verifyUser(userId)) {
         throw new Error("UserAlreadyExists");
     }
-    (0, exports.query)("INSERT INTO users (id, stock, lottery, gamble, lastClaim) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+    (0, exports.query)("INSERT INTO users (id, stock, lottery, gamble, lastClaim) VALUES (?, ?, ?, ?, ?)", [
         userId,
         "{}",
         "[]",

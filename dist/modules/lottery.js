@@ -79,7 +79,7 @@ class DrwInfo {
 exports.DrwInfo = DrwInfo;
 async function getDrwInfo(drwNo = getDrwNo(), getPrize = false) {
     if (drwNo > getDrwNo()) {
-        throw new Error("NotDrawnYet", { cause: new Error("ExceedsLatestDrw") });
+        throw new Error("NotDrawnYet", { cause: "ExceedsLatestDrw" });
     }
     else if (drwNo < 1) {
         throw new Error("IllegalDrwNo");
@@ -107,7 +107,7 @@ async function getDrwInfo(drwNo = getDrwNo(), getPrize = false) {
     }
     else {
         if (drwNo === getDrwNo()) {
-            throw new Error("NotDrawnYet", { cause: new Error("Saturday") });
+            throw new Error("NotDrawnYet", { cause: "Saturday" });
         }
         throw new Error("DrwInfoFetchFailed");
     }
