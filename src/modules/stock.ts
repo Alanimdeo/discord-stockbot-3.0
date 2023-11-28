@@ -74,15 +74,38 @@ export interface UserStockStatus {
   [code: string]: Asset;
 }
 
+export type RiseFall = "upperLimit" | "up" | "unchanged" | "down" | "lowerLimit"
+
 export interface StockInfo {
   name: string;
   code: string;
   price: number;
-  risefall: "upperLimit" | "up" | "unchanged" | "down" | "lowerLimit";
+  risefall: RiseFall;
   diff: number;
   diffRate: number;
   high: number;
   low: number;
+}
+
+const getRiseFall: (rf: string | number) => RiseFall = (rf) => {
+  if (typeof rf === "number") {
+    rf = String(rf);
+  }
+
+  switch (rf) {
+    case "1":
+      return "upperLimit";
+    case "2":
+      return "up";
+    case "3":
+      return "unchanged";
+    case "4":
+      return "down";
+    case "5":
+      return "lowerLimit";
+    default:
+      throw new Error("InvalidRiseFall");
+  }
 }
 
 export async function getStockInfo(query: string, corpList: CorpList): Promise<StockInfo> {
@@ -97,29 +120,22 @@ export async function getStockInfo(query: string, corpList: CorpList): Promise<S
   } else {
     throw new Error("ResultNotFound");
   }
-  const response = await axios(`http://api.finance.naver.com/service/itemSummary.nhn?itemcode=${code}`);
-  const data = response.data;
+
+  const response = await axios(`https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:${code}`);
+  let data = response.data;
   if (response.status !== 200 || !data) {
     throw new Error("StockFetchFailed");
   }
-  const risefall =
-    data.risefall === 1
-      ? "upperLimit"
-      : data.risefall === 2
-      ? "up"
-      : data.risefall === 3
-      ? "unchanged"
-      : data.risefall === 4
-      ? "lowerLimit"
-      : "down";
+  data = data.result.areas[0].datas[0];
+
   return {
-    name,
-    code,
-    price: data.now,
-    risefall,
-    diff: data.diff,
-    diffRate: data.rate,
-    high: data.high,
-    low: data.low,
+    name: data.nm,
+    code: data.cd,
+    price: data.nv,
+    risefall: getRiseFall(data.rf),
+    diff: data.cv,
+    diffRate: data.cr,
+    high: data.hv,
+    low: data.lv,
   };
 }
