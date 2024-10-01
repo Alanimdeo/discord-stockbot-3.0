@@ -71,6 +71,10 @@ async function getGoldPrice() {
         const { data } = await axios_1.default.post("https://apiserver.koreagoldx.co.kr/api/price/chart/listByDate", {
             srchDt: "1M",
             type: "Au",
+        }, {
+            headers: {
+                Referer: "https://www.koreagoldx.co.kr/",
+            },
         });
         const gold = {
             buy: {

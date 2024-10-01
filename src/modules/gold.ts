@@ -61,7 +61,8 @@ export class Gold implements Asset {
   }
 }
 
-const updateGold = async (user: User, gold: Gold) => await user.update([gold.toQueryOption()]);
+const updateGold = async (user: User, gold: Gold) =>
+  await user.update([gold.toQueryOption()]);
 
 export interface GoldPriceInfo {
   buy: {
@@ -78,10 +79,18 @@ export interface GoldPriceInfo {
 
 export async function getGoldPrice(): Promise<GoldPriceInfo> {
   try {
-    const { data } = await axios.post("https://apiserver.koreagoldx.co.kr/api/price/chart/listByDate", {
-      srchDt: "1M",
-      type: "Au",
-    });
+    const { data } = await axios.post(
+      "https://apiserver.koreagoldx.co.kr/api/price/chart/listByDate",
+      {
+        srchDt: "1M",
+        type: "Au",
+      },
+      {
+        headers: {
+          Referer: "https://www.koreagoldx.co.kr/",
+        },
+      }
+    );
     const gold = {
       buy: {
         price: data.sChartList[0].y,

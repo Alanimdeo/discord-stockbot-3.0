@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  GuildMember,
+  SlashCommandBuilder,
+} from "discord.js";
 import { getUserdata } from "../modules/database";
 import { getGoldPrice, GoldPriceInfo } from "../modules/gold";
 import { Command, Embed, EmbedOption, errorLog } from "../types";
@@ -7,8 +11,14 @@ module.exports = new Command(
   new SlashCommandBuilder()
     .setName("금")
     .setDescription("금 관련 명령어")
-    .addSubcommand((command) => command.setName("시세").setDescription("금 시세를 확인합니다."))
-    .addSubcommand((command) => command.setName("확인").setDescription("보유한 금의 개수와 가격을 확인합니다."))
+    .addSubcommand((command) =>
+      command.setName("시세").setDescription("금 시세를 확인합니다.")
+    )
+    .addSubcommand((command) =>
+      command
+        .setName("확인")
+        .setDescription("보유한 금의 개수와 가격을 확인합니다.")
+    )
     .addSubcommand((command) =>
       command
         .setName("구매")
@@ -16,7 +26,9 @@ module.exports = new Command(
         .addIntegerOption((option) =>
           option
             .setName("수량")
-            .setDescription("수량을 입력하세요. 0을 입력할 시 구매할 수 있는 수량 전체를 구매합니다.")
+            .setDescription(
+              "수량을 입력하세요. 0을 입력할 시 구매할 수 있는 수량 전체를 구매합니다."
+            )
             .setMinValue(0)
             .setRequired(true)
         )
@@ -28,14 +40,17 @@ module.exports = new Command(
         .addIntegerOption((option) =>
           option
             .setName("수량")
-            .setDescription("수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
+            .setDescription(
+              "수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다."
+            )
             .setMinValue(0)
             .setRequired(true)
         )
     ),
   async (interaction: ChatInputCommandInteraction) => {
-    console.log(interaction.options);
-    // return await eval(`(async () => {${interaction.options}(interaction)})()`);
+    return await eval(
+      `(async () => {${interaction.options.getSubcommand()}(interaction)})()`
+    );
   }
 );
 
@@ -80,8 +95,12 @@ async function 확인(interaction: ChatInputCommandInteraction) {
       if (gold.sell.price !== userdata.gold.buyPrice) {
         const prefix = gold.sell.price > userdata.gold.buyPrice ? "+" : "";
         diff = `${prefix}${(gold.sell.price - userdata.gold.buyPrice).toLocaleString("ko-KR")}원 (${prefix}${
-          Math.round((userdata.gold.buyPrice / userdata.gold.amount / gold.sell.price - 1) * 10000 + Number.EPSILON) /
-          100
+          Math.round(
+            (userdata.gold.buyPrice / userdata.gold.amount / gold.sell.price -
+              1) *
+              10000 +
+              Number.EPSILON
+          ) / 100
         }%)`;
       }
     }
@@ -91,7 +110,10 @@ async function 확인(interaction: ChatInputCommandInteraction) {
         icon: "coin",
         title: `${(interaction.member as GuildMember).displayName} 님의 금 보유 현황`,
         description: `수량: \`${userdata.gold.amount.toLocaleString("ko-KR")}원\`\n평균 구매가: : \`${(
-          Math.round((userdata.gold.buyPrice / userdata.gold.amount + Number.EPSILON) * 100) / 100
+          Math.round(
+            (userdata.gold.buyPrice / userdata.gold.amount + Number.EPSILON) *
+              100
+          ) / 100
         ).toLocaleString("ko-KR")}원\`\n수익: \`${diff}\``,
       })
     );
@@ -128,7 +150,9 @@ async function 구매(interaction: ChatInputCommandInteraction) {
         title: "구매 완료",
         description: `금 ${amount}개를 구매했습니다.\n구매 금액: \`${gold.buy.price.toLocaleString(
           "ko-KR"
-        )} × ${amount.toLocaleString("ko-KR")} = ${(gold.buy.price * amount).toLocaleString(
+        )} × ${amount.toLocaleString("ko-KR")} = ${(
+          gold.buy.price * amount
+        ).toLocaleString(
           "ko-KR"
         )}원\`\n보유 중인 금: \`${userdata.gold.amount.toLocaleString(
           "ko-KR"
@@ -168,7 +192,9 @@ async function 판매(interaction: ChatInputCommandInteraction) {
         title: "판매 완료",
         description: `금 ${amount}개를 판매했습니다.\n판매 금액: \`${gold.sell.price.toLocaleString(
           "ko-KR"
-        )} × ${amount.toLocaleString("ko-KR")} = ${(gold.sell.price * amount).toLocaleString(
+        )} × ${amount.toLocaleString("ko-KR")} = ${(
+          gold.sell.price * amount
+        ).toLocaleString(
           "ko-KR"
         )}원\`\n보유 중인 금: \`${userdata.gold.amount.toLocaleString(
           "ko-KR"
@@ -195,7 +221,8 @@ function handleError(err: unknown): EmbedOption {
         break;
       case "GoldFetchFailed":
         option.title = "금 시세 조회 실패";
-        option.description = "금 시세 조회에 실패했습니다. 일시적 오류일 수 있으니 잠시 후 다시 시도하세요.";
+        option.description =
+          "금 시세 조회에 실패했습니다. 일시적 오류일 수 있으니 잠시 후 다시 시도하세요.";
     }
   } else {
     errorLog(err, "commands/gold");
