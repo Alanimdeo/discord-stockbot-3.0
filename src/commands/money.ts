@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  GuildMember,
+  SlashCommandBuilder,
+} from "discord.js";
 import { getUserdata, verifyUser } from "../modules/database";
 import { getGoldPrice } from "../modules/gold";
 import { getStockInfo } from "../modules/stock";
@@ -8,20 +12,31 @@ module.exports = new Command(
   new SlashCommandBuilder()
     .setName("돈")
     .setDescription("돈 관련 명령어")
-    .addSubcommand((command) => command.setName("확인").setDescription("가진 돈과 자산을 확인합니다."))
+    .addSubcommand((command) =>
+      command.setName("확인").setDescription("가진 돈과 자산을 확인합니다.")
+    )
     .addSubcommand((command) =>
       command
         .setName("송금")
         .setDescription("돈을 다른 사람에게 보냅니다.")
         .addUserOption((option) =>
-          option.setName("대상").setDescription("돈을 받을 사람을 입력하세요.").setRequired(true)
+          option
+            .setName("대상")
+            .setDescription("돈을 받을 사람을 입력하세요.")
+            .setRequired(true)
         )
         .addIntegerOption((option) =>
-          option.setName("금액").setDescription("보낼 금액을 입력하세요.").setMinValue(1).setRequired(true)
+          option
+            .setName("금액")
+            .setDescription("보낼 금액을 입력하세요.")
+            .setMinValue(1)
+            .setRequired(true)
         )
     ),
   async (interaction: ChatInputCommandInteraction, bot: Bot) => {
-    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
+    return await eval(
+      `(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`
+    );
   }
 );
 
@@ -110,7 +125,8 @@ function handleError(err: unknown) {
     switch (err.message) {
       case "StockFetchFailed":
         option.title = "주식 정보 읽기 실패";
-        option.description = "주식 정보를 읽어오는 데 실패했습니다. 서버 문제일 수 있으니 나중에 다시 시도해 보세요.";
+        option.description =
+          "주식 정보를 읽어오는 데 실패했습니다. 서버 문제일 수 있으니 나중에 다시 시도해 보세요.";
         break;
       default:
         errorLog(err, "commands/money");

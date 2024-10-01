@@ -16,6 +16,8 @@ function getYesterday() {
 exports.getYesterday = getYesterday;
 function isToday(date) {
     const now = new Date();
-    return (date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth() && date.getDate() === now.getDate());
+    return (date.getFullYear() === now.getFullYear() &&
+        date.getMonth() === now.getMonth() &&
+        date.getDate() === now.getDate());
 }
 exports.isToday = isToday;

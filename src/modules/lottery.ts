@@ -14,7 +14,9 @@ export class Lottery {
     if (numbers) {
       if (numbers.length !== 6) {
         throw new Error("NotSixNumbers");
-      } else if (numbers.filter((n) => n < 1 || n > 45 || Math.floor(n) !== n).length > 0) {
+      } else if (
+        numbers.filter((n) => n < 1 || n > 45 || Math.floor(n) !== n).length > 0
+      ) {
         throw new Error("IllegalNumber");
       } else if (new Set(numbers).size !== 6) {
         throw new Error("NotUniqueNumber");
@@ -74,13 +76,18 @@ export class DrwInfo {
   }
 }
 
-export async function getDrwInfo(drwNo: number = getDrwNo(), getPrize: boolean = false): Promise<DrwInfo> {
+export async function getDrwInfo(
+  drwNo: number = getDrwNo(),
+  getPrize: boolean = false
+): Promise<DrwInfo> {
   if (drwNo > getDrwNo()) {
     throw new Error("NotDrawnYet", { cause: "ExceedsLatestDrw" });
   } else if (drwNo < 1) {
     throw new Error("IllegalDrwNo");
   }
-  const response = await axios(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`);
+  const response = await axios(
+    `https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`
+  );
   const drwInfoRaw = response.data;
   if (drwInfoRaw.returnValue === "success") {
     const drwInfo = new DrwInfo(drwInfoRaw);
@@ -92,11 +99,19 @@ export async function getDrwInfo(drwNo: number = getDrwNo(), getPrize: boolean =
         responseType: "arraybuffer",
         responseEncoding: "binary",
       });
-      const prizes = parse(decode(detailedResponse.data, "EUC-KR")).querySelectorAll("td.tar");
+      const prizes = parse(
+        decode(detailedResponse.data, "EUC-KR")
+      ).querySelectorAll("td.tar");
       drwInfo.prize = {
-        firstPrize: Number(prizes[1].childNodes.toString().replace(/[^0-9]/g, "")),
-        secondPrize: Number(prizes[3].childNodes.toString().replace(/[^0-9]/g, "")),
-        thirdPrize: Number(prizes[5].childNodes.toString().replace(/[^0-9]/g, "")),
+        firstPrize: Number(
+          prizes[1].childNodes.toString().replace(/[^0-9]/g, "")
+        ),
+        secondPrize: Number(
+          prizes[3].childNodes.toString().replace(/[^0-9]/g, "")
+        ),
+        thirdPrize: Number(
+          prizes[5].childNodes.toString().replace(/[^0-9]/g, "")
+        ),
       };
     }
     return drwInfo;
@@ -128,8 +143,13 @@ export function getDrwNo(date: string | Date = new Date()): number {
   return Math.floor(drwNo);
 }
 
-export async function addLottery(user: User, lottery: Lottery): Promise<Lottery[]> {
-  if (user.lottery.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5) {
+export async function addLottery(
+  user: User,
+  lottery: Lottery
+): Promise<Lottery[]> {
+  if (
+    user.lottery.filter((lottery) => lottery.drwNo === getDrwNo()).length > 5
+  ) {
     throw new Error("LotteryLimitExceeded");
   }
   user.lottery.push(lottery);

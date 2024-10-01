@@ -14,9 +14,15 @@ console.log("설정 불러오는 중...");
 const config_1 = __importDefault(require("./config"));
 const database_1 = require("./modules/database");
 const bot = new types_1.Bot({
-    intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent],
+    intents: [
+        discord_js_1.GatewayIntentBits.Guilds,
+        discord_js_1.GatewayIntentBits.GuildMessages,
+        discord_js_1.GatewayIntentBits.MessageContent,
+    ],
 });
-const commands = fs_1.default.readdirSync("./commands").filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
+const commands = fs_1.default
+    .readdirSync("./commands")
+    .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of commands) {
     const command = require(`./commands/${file}`);
     console.log(`명령어 불러오는 중... (${command.data.name})`);
@@ -44,7 +50,9 @@ async function getCorpList() {
     const companies = await (0, download_1.default)("http://kind.krx.co.kr/corpgeneral/corpList.do?method=download");
     console.log("상장기업 목록 다운로드 완료!");
     console.log("상장기업 목록 정리 중...");
-    const workbook = xlsx_1.default.read(iconv_lite_1.default.decode(companies, "EUC-KR"), { type: "string" });
+    const workbook = xlsx_1.default.read(iconv_lite_1.default.decode(companies, "EUC-KR"), {
+        type: "string",
+    });
     const excel = workbook.Sheets[workbook.SheetNames[0]];
     const corpList = {};
     for (let i = 1; i < Number(excel["!ref"].split("I")[1]) + 1; i++) {

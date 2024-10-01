@@ -3,7 +3,13 @@ import fs from "fs";
 import download from "download";
 import xlsx from "xlsx";
 import iconv from "iconv-lite";
-import { ChatInputCommandInteraction, GatewayIntentBits, GuildMember, Interaction, Message } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  GatewayIntentBits,
+  GuildMember,
+  Interaction,
+  Message,
+} from "discord.js";
 import { AdminCommand, Bot, Command, CorpList, Embed } from "./types";
 
 console.log("설정 불러오는 중...");
@@ -11,10 +17,16 @@ import config from "./config";
 import { verifyUser } from "./modules/database";
 
 const bot: Bot = new Bot({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
-const commands = fs.readdirSync("./commands").filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
+const commands = fs
+  .readdirSync("./commands")
+  .filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
 for (const file of commands) {
   const command: Command = require(`./commands/${file}`);
   console.log(`명령어 불러오는 중... (${command.data.name})`);
@@ -42,21 +54,34 @@ bot.once("ready", async () => {
 
 async function getCorpList() {
   console.log("상장기업 목록 다운로드 중...");
-  const companies = await download("http://kind.krx.co.kr/corpgeneral/corpList.do?method=download");
+  const companies = await download(
+    "http://kind.krx.co.kr/corpgeneral/corpList.do?method=download"
+  );
   console.log("상장기업 목록 다운로드 완료!");
   console.log("상장기업 목록 정리 중...");
-  const workbook = xlsx.read(iconv.decode(companies, "EUC-KR"), { type: "string" });
+  const workbook = xlsx.read(iconv.decode(companies, "EUC-KR"), {
+    type: "string",
+  });
   const excel = workbook.Sheets[workbook.SheetNames[0]];
   const corpList: CorpList = {};
   for (let i = 1; i < Number(excel["!ref"]!.split("I")[1]) + 1; i++) {
-    corpList[excel["A" + i].v] = String(excel["B" + i].v as number).padStart(6, "0");
+    corpList[excel["A" + i].v] = String(excel["B" + i].v as number).padStart(
+      6,
+      "0"
+    );
   }
   delete corpList.회사명;
-  console.log(`상장기업 목록 정리 완료! 기업 수: \x1b[32m${Object.keys(corpList).length}\x1b[0m`);
+  console.log(
+    `상장기업 목록 정리 완료! 기업 수: \x1b[32m${Object.keys(corpList).length}\x1b[0m`
+  );
   bot.corpList = corpList;
   if (config.exportCorpListAsFile) {
     console.log("상장기업 목록 저장 중..");
-    fs.writeFileSync("./corpList.json", JSON.stringify(corpList, null, 2), "utf-8");
+    fs.writeFileSync(
+      "./corpList.json",
+      JSON.stringify(corpList, null, 2),
+      "utf-8"
+    );
     console.log("상장기업 목록 저장 완료!");
   }
 }
@@ -70,10 +95,8 @@ bot.on("interactionCreate", async (interaction: Interaction) => {
     await interaction.deferReply();
     if (
       interaction instanceof ChatInputCommandInteraction &&
-      (
-        interaction.commandName === "가입" ||
-        (await verifyUser((interaction.member as GuildMember).id))
-      )
+      (interaction.commandName === "가입" ||
+        (await verifyUser((interaction.member as GuildMember).id)))
     ) {
       await command.execute(interaction, bot);
     } else {
@@ -87,7 +110,9 @@ bot.on("interactionCreate", async (interaction: Interaction) => {
       );
     }
   } catch (err) {
-    await interaction.editReply(`오류가 발생했습니다. 오류 로그:\`\`\`${String(err)}\`\`\``);
+    await interaction.editReply(
+      `오류가 발생했습니다. 오류 로그:\`\`\`${String(err)}\`\`\``
+    );
   }
 });
 

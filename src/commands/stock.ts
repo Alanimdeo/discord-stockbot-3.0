@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  GuildMember,
+  SlashCommandBuilder,
+} from "discord.js";
 import { getUserdata } from "../modules/database";
 import { getStockInfo } from "../modules/stock";
 import { Bot, Command, Embed, EmbedOption, errorLog } from "../types";
@@ -12,21 +16,33 @@ module.exports = new Command(
         .setName("확인")
         .setDescription("주식 가격을 확인합니다.")
         .addStringOption((option) =>
-          option.setName("회사명").setDescription("회사명 또는 종목코드를 입력하세요.").setRequired(true)
+          option
+            .setName("회사명")
+            .setDescription("회사명 또는 종목코드를 입력하세요.")
+            .setRequired(true)
         )
     )
-    .addSubcommand((command) => command.setName("내주식").setDescription("보유한 주식의 상태를 확인합니다."))
+    .addSubcommand((command) =>
+      command
+        .setName("내주식")
+        .setDescription("보유한 주식의 상태를 확인합니다.")
+    )
     .addSubcommand((command) =>
       command
         .setName("구매")
         .setDescription("주식을 구매합니다.")
         .addStringOption((option) =>
-          option.setName("회사명").setDescription("회사명 또는 종목코드를 입력하세요.").setRequired(true)
+          option
+            .setName("회사명")
+            .setDescription("회사명 또는 종목코드를 입력하세요.")
+            .setRequired(true)
         )
         .addIntegerOption((option) =>
           option
             .setName("수량")
-            .setDescription("수량을 입력하세요. 0을 입력할 시 구매할 수 있는 수량 전체를 구매합니다.")
+            .setDescription(
+              "수량을 입력하세요. 0을 입력할 시 구매할 수 있는 수량 전체를 구매합니다."
+            )
             .setMinValue(0)
             .setRequired(true)
         )
@@ -36,24 +52,34 @@ module.exports = new Command(
         .setName("판매")
         .setDescription("주식을 판매합니다.")
         .addStringOption((option) =>
-          option.setName("회사명").setDescription("회사명 또는 종목코드를 입력하세요.").setRequired(true)
+          option
+            .setName("회사명")
+            .setDescription("회사명 또는 종목코드를 입력하세요.")
+            .setRequired(true)
         )
         .addIntegerOption((option) =>
           option
             .setName("수량")
-            .setDescription("수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다.")
+            .setDescription(
+              "수량을 입력하세요. 0을 입력할 시 판매할 수 있는 수량 전체를 판매합니다."
+            )
             .setMinValue(0)
             .setRequired(true)
         )
     ),
   async (interaction: ChatInputCommandInteraction, bot: Bot) => {
-    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`);
+    return await eval(
+      `(async () => {${interaction.options.getSubcommand()}(interaction, bot)})()`
+    );
   }
 );
 
 async function 확인(interaction: ChatInputCommandInteraction, bot: Bot) {
   try {
-    const stockInfo = await getStockInfo(interaction.options.getString("회사명", true), bot.corpList);
+    const stockInfo = await getStockInfo(
+      interaction.options.getString("회사명", true),
+      bot.corpList
+    );
     await interaction.editReply(
       Embed({
         color: "#0090ff",
@@ -90,10 +116,22 @@ async function 내주식(interaction: ChatInputCommandInteraction, bot: Bot) {
       const stockInfo = await getStockInfo(code, bot.corpList);
       const currentPrice = stockInfo.price * userStock.amount;
       const avgPrice = userStock.buyPrice / userStock.amount;
-      const plusMinus = currentPrice > userStock.buyPrice ? "+" : currentPrice === userStock.buyPrice ? "=" : "";
-      const prefix = stockInfo.price > avgPrice ? "diff\n-" : stockInfo.price === avgPrice ? "\n*" : "yaml\n=";
+      const plusMinus =
+        currentPrice > userStock.buyPrice
+          ? "+"
+          : currentPrice === userStock.buyPrice
+            ? "="
+            : "";
+      const prefix =
+        stockInfo.price > avgPrice
+          ? "diff\n-"
+          : stockInfo.price === avgPrice
+            ? "\n*"
+            : "yaml\n=";
       const benefit = `${plusMinus}${
-        Math.round(((stockInfo.price / avgPrice) * 100 - 100 + Number.EPSILON) * 100) / 100
+        Math.round(
+          ((stockInfo.price / avgPrice) * 100 - 100 + Number.EPSILON) * 100
+        ) / 100
       }%, ${plusMinus}${(currentPrice - userStock.buyPrice).toLocaleString("ko-KR")}원`;
       reply += `\`\`\`${prefix} ${stockInfo.name}(${stockInfo.code}): ${
         userStock.amount
@@ -101,7 +139,9 @@ async function 내주식(interaction: ChatInputCommandInteraction, bot: Bot) {
         currentPrice === userStock.buyPrice ? "=" : benefit
       })\n  구매 가격 ${userStock.buyPrice.toLocaleString("ko-KR")}원(평균 ${(
         Math.round((avgPrice + Number.EPSILON) * 100) / 100
-      ).toLocaleString("ko-KR")}원), 현재 1주당 ${stockInfo.price.toLocaleString("ko-KR")}원\`\`\``;
+      ).toLocaleString(
+        "ko-KR"
+      )}원), 현재 1주당 ${stockInfo.price.toLocaleString("ko-KR")}원\`\`\``;
     }
     await interaction.editReply(reply);
   } catch (err) {
@@ -142,7 +182,9 @@ async function 구매(interaction: ChatInputCommandInteraction, bot: Bot) {
           "ko-KR"
         )} = ${(stockInfo.price * amount).toLocaleString("ko-KR")}원\`\n보유 중인 주식: \`${userdata.stock.status[
           stockInfo.code
-        ].amount.toLocaleString("ko-KR")}주\`\n남은 돈: \`${userdata.money.amount.toLocaleString("ko-KR")}원\``,
+        ].amount.toLocaleString(
+          "ko-KR"
+        )}주\`\n남은 돈: \`${userdata.money.amount.toLocaleString("ko-KR")}원\``,
       })
     );
   } catch (err) {
@@ -186,7 +228,11 @@ async function 판매(interaction: ChatInputCommandInteraction, bot: Bot) {
         )} = ${(stockInfo.price * amount).toLocaleString("ko-KR")}원\`\n세금 및 수수료(0.3%): \`${fee.toLocaleString(
           "ko-KR"
         )}원\`\n실 수령액: \`${(stockInfo.price * amount - fee).toLocaleString("ko-KR")}원\`\n보유 중인 주식: \`${
-          noStockRemain ? "0" : userdata.stock.status[stockInfo.code].amount.toLocaleString("ko-KR")
+          noStockRemain
+            ? "0"
+            : userdata.stock.status[stockInfo.code].amount.toLocaleString(
+                "ko-KR"
+              )
         }주\`\n남은 돈: \`${userdata.money.amount.toLocaleString("ko-KR")}원\``,
       })
     );
@@ -206,11 +252,13 @@ function handleError(err: unknown): EmbedOption {
     switch (err.message) {
       case "ResultNotFound":
         option.title = "검색 결과 없음";
-        option.description = "검색 결과가 없습니다. 회사명 또는 종목코드를 올바르게 입력하였는지 확인하세요.";
+        option.description =
+          "검색 결과가 없습니다. 회사명 또는 종목코드를 올바르게 입력하였는지 확인하세요.";
         break;
       case "StockFetchFailed":
         option.title = "주식 정보 읽기 실패";
-        option.description = "주식 정보를 읽어오는 데 실패했습니다. 서버 문제일 수 있으니 나중에 다시 시도해 보세요.";
+        option.description =
+          "주식 정보를 읽어오는 데 실패했습니다. 서버 문제일 수 있으니 나중에 다시 시도해 보세요.";
         break;
       default:
         errorLog(err, "commands/stock");

@@ -20,10 +20,14 @@ export class User {
       const queries: string[] = [];
       options.map((q) => queries.push(`${q.key} = ${format("?", [q.value])}`));
       const queryString = queries.join(",");
-      query(`UPDATE users SET ${queryString} WHERE id = ?`, [this.id], async (err) => {
-        if (err) return reject(err);
-        return resolve(this);
-      });
+      query(
+        `UPDATE users SET ${queryString} WHERE id = ?`,
+        [this.id],
+        async (err) => {
+          if (err) return reject(err);
+          return resolve(this);
+        }
+      );
     });
   }
 

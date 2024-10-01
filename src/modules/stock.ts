@@ -5,7 +5,11 @@ import { User } from "./user";
 export class UserStock {
   user: User;
   status: UserStockStatus;
-  async setStock(code: string, amount: number, buyPrice?: number): Promise<UserStock> {
+  async setStock(
+    code: string,
+    amount: number,
+    buyPrice?: number
+  ): Promise<UserStock> {
     if (amount < 0 || (buyPrice && buyPrice < 0)) {
       throw new Error("NegativeNumber");
     } else if (amount === 0) {
@@ -19,7 +23,11 @@ export class UserStock {
     await updateStock(this.user, this.status);
     return this;
   }
-  async addStock(code: string, amount: number, price: number): Promise<UserStock> {
+  async addStock(
+    code: string,
+    amount: number,
+    price: number
+  ): Promise<UserStock> {
     if (amount < 0 || price < 0) {
       throw new Error("NegativeNumber");
     }
@@ -35,7 +43,11 @@ export class UserStock {
     await updateStock(this.user, this.status);
     return this;
   }
-  async reduceStock(code: string, amount: number, price: number): Promise<UserStock> {
+  async reduceStock(
+    code: string,
+    amount: number,
+    price: number
+  ): Promise<UserStock> {
     if (amount < 0 || price < 0) {
       throw new Error("NegativeNumber");
     } else if (!this.status[code]) {
@@ -74,7 +86,12 @@ export interface UserStockStatus {
   [code: string]: Asset;
 }
 
-export type RiseFall = "upperLimit" | "up" | "unchanged" | "down" | "lowerLimit"
+export type RiseFall =
+  | "upperLimit"
+  | "up"
+  | "unchanged"
+  | "down"
+  | "lowerLimit";
 
 export interface StockInfo {
   name: string;
@@ -106,9 +123,12 @@ const getRiseFall: (rf: string | number) => RiseFall = (rf) => {
     default:
       throw new Error("InvalidRiseFall");
   }
-}
+};
 
-export async function getStockInfo(query: string, corpList: CorpList): Promise<StockInfo> {
+export async function getStockInfo(
+  query: string,
+  corpList: CorpList
+): Promise<StockInfo> {
   let code = "",
     name = "";
   if (isNaN(Number(query)) && Object.keys(corpList).includes(query)) {
@@ -121,7 +141,9 @@ export async function getStockInfo(query: string, corpList: CorpList): Promise<S
     throw new Error("ResultNotFound");
   }
 
-  const response = await axios(`https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:${code}`);
+  const response = await axios(
+    `https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:${code}`
+  );
   let data = response.data;
   if (response.status !== 200 || !data) {
     throw new Error("StockFetchFailed");

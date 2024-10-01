@@ -3,7 +3,9 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command, Embed } from "../types";
 
 module.exports = new Command(
-  new SlashCommandBuilder().setName("한강").setDescription("한강 수온을 확인합니다."),
+  new SlashCommandBuilder()
+    .setName("한강")
+    .setDescription("한강 수온을 확인합니다."),
   async (interaction: ChatInputCommandInteraction) => {
     try {
       const response = await axios("http://hangang.dkserver.wo.tc");
@@ -21,7 +23,8 @@ module.exports = new Command(
           color: "#ff0000",
           icon: "warning",
           title: "오류",
-          description: "수온 정보를 받아오지 못했습니다. 다음에 다시 시도하세요.",
+          description:
+            "수온 정보를 받아오지 못했습니다. 다음에 다시 시도하세요.",
         })
       );
     }

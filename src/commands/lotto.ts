@@ -1,6 +1,17 @@
-import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  GuildMember,
+  SlashCommandBuilder,
+} from "discord.js";
 import { getUserdata } from "../modules/database";
-import { addLottery, DrwInfo, getDrwInfo, getDrwNo, Lottery, LotteryNumbers } from "../modules/lottery";
+import {
+  addLottery,
+  DrwInfo,
+  getDrwInfo,
+  getDrwNo,
+  Lottery,
+  LotteryNumbers,
+} from "../modules/lottery";
 import { Command, Embed, EmbedOption } from "../types";
 
 module.exports = new Command(
@@ -12,17 +23,29 @@ module.exports = new Command(
         .setName("회차확인")
         .setDescription("회차별 로또 당첨번호를 확인합니다.")
         .addIntegerOption((option) =>
-          option.setName("회차").setDescription("확인할 회차를 입력하세요. 회차를 미입력 시 최근 회차를 확인합니다.")
+          option
+            .setName("회차")
+            .setDescription(
+              "확인할 회차를 입력하세요. 회차를 미입력 시 최근 회차를 확인합니다."
+            )
         )
     )
-    .addSubcommand((command) => command.setName("당첨확인").setDescription("구매한 로또의 당첨 여부를 확인합니다."))
+    .addSubcommand((command) =>
+      command
+        .setName("당첨확인")
+        .setDescription("구매한 로또의 당첨 여부를 확인합니다.")
+    )
     .addSubcommandGroup((commandGroup) =>
       commandGroup
         .setName("구매")
         .setDescription(
           "로또를 구매합니다. 토요일에는 오후 8시까지 구매 가능하며, 다음 회차는 일요일 0시부터 구매 가능합니다."
         )
-        .addSubcommand((command) => command.setName("자동").setDescription("자동으로 번호를 생성한 로또를 구매합니다."))
+        .addSubcommand((command) =>
+          command
+            .setName("자동")
+            .setDescription("자동으로 번호를 생성한 로또를 구매합니다.")
+        )
         .addSubcommand((command) =>
           command
             .setName("수동")
@@ -78,13 +101,17 @@ module.exports = new Command(
         )
     ),
   async (interaction: ChatInputCommandInteraction) => {
-    return await eval(`(async () => {${interaction.options.getSubcommand()}(interaction)})()`);
+    return await eval(
+      `(async () => {${interaction.options.getSubcommand()}(interaction)})()`
+    );
   }
 );
 
 async function 회차확인(interaction: ChatInputCommandInteraction) {
   try {
-    const drwInfo = await getDrwInfo(interaction.options.getInteger("회차") || undefined);
+    const drwInfo = await getDrwInfo(
+      interaction.options.getInteger("회차") || undefined
+    );
     await interaction.editReply(
       Embed({
         color: "#008000",
@@ -147,13 +174,19 @@ async function 당첨확인(interaction: ChatInputCommandInteraction) {
     } = {};
     const currentDrwNo = getDrwNo();
     await Promise.all(
-      Array.from(new Set(userdata.lottery.map((drw) => drw.drwNo).filter((drwNo) => drwNo <= currentDrwNo))).map(
-        async (drwNo) => {
-          drwInfos[drwNo] = await getDrwInfo(drwNo, true);
-        }
-      )
+      Array.from(
+        new Set(
+          userdata.lottery
+            .map((drw) => drw.drwNo)
+            .filter((drwNo) => drwNo <= currentDrwNo)
+        )
+      ).map(async (drwNo) => {
+        drwInfos[drwNo] = await getDrwInfo(drwNo, true);
+      })
     );
-    const reply = [`:information_source: ${(interaction.member as GuildMember).displayName} 님의 로또 목록입니다.`];
+    const reply = [
+      `:information_source: ${(interaction.member as GuildMember).displayName} 님의 로또 목록입니다.`,
+    ];
     const shouldDelete: number[] = [];
     await Promise.all(
       userdata.lottery.map(async (drw, index) => {
@@ -165,7 +198,9 @@ async function 당첨확인(interaction: ChatInputCommandInteraction) {
         } else {
           shouldDelete.push(index);
           const drwInfo = drwInfos[drw.drwNo];
-          const correct = drw.numbers.filter((number) => drwInfo.drwtNo.includes(number)).length;
+          const correct = drw.numbers.filter((number) =>
+            drwInfo.drwtNo.includes(number)
+          ).length;
           if (correct < 3) {
             prefix = "diff\n-";
             prize = "(낙첨)";
@@ -198,7 +233,9 @@ async function 당첨확인(interaction: ChatInputCommandInteraction) {
             await userdata.money.addMoney(prizeAmount);
           }
         }
-        reply.push(`\`\`\`${prefix} ${drw.drwNo}회차 | ${drw.numbers.join(" ")} ${prize}\`\`\``);
+        reply.push(
+          `\`\`\`${prefix} ${drw.drwNo}회차 | ${drw.numbers.join(" ")} ${prize}\`\`\``
+        );
       })
     );
     await Promise.all(
@@ -207,7 +244,9 @@ async function 당첨확인(interaction: ChatInputCommandInteraction) {
       })
     );
     userdata.lottery = userdata.lottery.filter(() => true);
-    await userdata.update([{ key: "lottery", value: JSON.stringify(userdata.lottery) }]);
+    await userdata.update([
+      { key: "lottery", value: JSON.stringify(userdata.lottery) },
+    ]);
     await interaction.editReply(
       reply.length > 1
         ? reply.join("")
@@ -248,7 +287,9 @@ async function 자동(interaction: ChatInputCommandInteraction) {
         })
       );
       return;
-    } else if (userdata.lottery.filter((drw) => drw.drwNo === getDrwNo() + 1).length >= 5) {
+    } else if (
+      userdata.lottery.filter((drw) => drw.drwNo === getDrwNo() + 1).length >= 5
+    ) {
       await interaction.editReply(limitExceededEmbed);
       return;
     }
@@ -310,7 +351,9 @@ async function 수동(interaction: ChatInputCommandInteraction) {
         })
       );
       return;
-    } else if (userdata.lottery.filter((drw) => drw.drwNo === getDrwNo() + 1).length >= 5) {
+    } else if (
+      userdata.lottery.filter((drw) => drw.drwNo === getDrwNo() + 1).length >= 5
+    ) {
       await interaction.editReply(limitExceededEmbed);
       return;
     }
@@ -348,12 +391,14 @@ const purchaseBlockedEmbed = Embed({
   color: "#ff0000",
   icon: "warning",
   title: "구매 불가",
-  description: "토요일 로또 구매는 오후 8시까지만 가능합니다.\n다음 회차 로또는 내일부터 구매할 수 있습니다.",
+  description:
+    "토요일 로또 구매는 오후 8시까지만 가능합니다.\n다음 회차 로또는 내일부터 구매할 수 있습니다.",
 });
 
 const limitExceededEmbed = Embed({
   color: "#ff0000",
   icon: "warning",
   title: "구매 한도 도달",
-  description: "회차당 최대 5게임까지 구매 가능합니다.\n\n한국도박문제 관리센터: :telephone: 1336",
+  description:
+    "회차당 최대 5게임까지 구매 가능합니다.\n\n한국도박문제 관리센터: :telephone: 1336",
 });

@@ -6,7 +6,9 @@ import { Command, Embed, EmbedOption } from "../types";
 module.exports = new Command(
   new SlashCommandBuilder()
     .setName("홀짝")
-    .setDescription("홀과 짝 중 하나를 선택하여 맞출 경우 건 돈의 1.5배를 획득합니다.")
+    .setDescription(
+      "홀과 짝 중 하나를 선택하여 맞출 경우 건 돈의 1.5배를 획득합니다."
+    )
     .addStringOption((option) =>
       option
         .setName("홀짝")
@@ -15,7 +17,11 @@ module.exports = new Command(
         .setRequired(true)
     )
     .addIntegerOption((option) =>
-      option.setName("금액").setDescription("베팅할 금액을 입력하세요.").setMinValue(1).setRequired(true)
+      option
+        .setName("금액")
+        .setDescription("베팅할 금액을 입력하세요.")
+        .setMinValue(1)
+        .setRequired(true)
     ),
   async (interaction: ChatInputCommandInteraction) => {
     const userdata = await getUserdata(interaction.user.id);
@@ -44,9 +50,9 @@ module.exports = new Command(
     if (random === interaction.options.getString("홀짝", true)) {
       await userdata.money.addMoney(betMoney * 0.5);
       embedOption.icon = "tada";
-      embedOption.description = `축하합니다! 도박에 성공하여 \`${(betMoney * 0.5).toLocaleString(
-        "ko-KR"
-      )}원\`을 얻었습니다.`;
+      embedOption.description = `축하합니다! 도박에 성공하여 \`${(
+        betMoney * 0.5
+      ).toLocaleString("ko-KR")}원\`을 얻었습니다.`;
     } else {
       await userdata.money.reduceMoney(betMoney);
       embedOption.icon = "disappointed_relieved";

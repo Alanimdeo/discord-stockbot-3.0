@@ -16,10 +16,14 @@ export const query = db.query.bind(db);
 
 export async function verifyUser(userId: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
-    db.query("SELECT EXISTS (SELECT * FROM users WHERE id = ?) AS SUCCESS", [userId], (err, result) => {
-      if (err) return reject(err);
-      return resolve(!!result[0].SUCCESS);
-    });
+    db.query(
+      "SELECT EXISTS (SELECT * FROM users WHERE id = ?) AS SUCCESS",
+      [userId],
+      (err, result) => {
+        if (err) return reject(err);
+        return resolve(!!result[0].SUCCESS);
+      }
+    );
   });
 }
 
@@ -49,12 +53,15 @@ export async function createUser(userId: string): Promise<User> {
   if (await verifyUser(userId)) {
     throw new Error("UserAlreadyExists");
   }
-  query("INSERT INTO users (id, stock, lottery, gamble, lastClaim) VALUES (?, ?, ?, ?, ?)", [
-    userId,
-    "{}",
-    "[]",
-    `{"count":0,"lastPlayed":${getYesterday()}}`,
-    getYesterday(),
-  ]);
+  query(
+    "INSERT INTO users (id, stock, lottery, gamble, lastClaim) VALUES (?, ?, ?, ?, ?)",
+    [
+      userId,
+      "{}",
+      "[]",
+      `{"count":0,"lastPlayed":${getYesterday()}}`,
+      getYesterday(),
+    ]
+  );
   return new User(userId);
 }

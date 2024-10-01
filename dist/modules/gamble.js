@@ -12,7 +12,9 @@ async function checkDailyLimit(user) {
         }
         else {
             user.gamble.count++;
-            await user.update([{ key: "gamble", value: JSON.stringify(user.gamble) }]);
+            await user.update([
+                { key: "gamble", value: JSON.stringify(user.gamble) },
+            ]);
             return true;
         }
     }

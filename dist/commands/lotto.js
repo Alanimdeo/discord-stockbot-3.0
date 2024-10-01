@@ -10,12 +10,18 @@ module.exports = new types_1.Command(new discord_js_1.SlashCommandBuilder()
     .addSubcommand((command) => command
     .setName("회차확인")
     .setDescription("회차별 로또 당첨번호를 확인합니다.")
-    .addIntegerOption((option) => option.setName("회차").setDescription("확인할 회차를 입력하세요. 회차를 미입력 시 최근 회차를 확인합니다.")))
-    .addSubcommand((command) => command.setName("당첨확인").setDescription("구매한 로또의 당첨 여부를 확인합니다."))
+    .addIntegerOption((option) => option
+    .setName("회차")
+    .setDescription("확인할 회차를 입력하세요. 회차를 미입력 시 최근 회차를 확인합니다.")))
+    .addSubcommand((command) => command
+    .setName("당첨확인")
+    .setDescription("구매한 로또의 당첨 여부를 확인합니다."))
     .addSubcommandGroup((commandGroup) => commandGroup
     .setName("구매")
     .setDescription("로또를 구매합니다. 토요일에는 오후 8시까지 구매 가능하며, 다음 회차는 일요일 0시부터 구매 가능합니다.")
-    .addSubcommand((command) => command.setName("자동").setDescription("자동으로 번호를 생성한 로또를 구매합니다."))
+    .addSubcommand((command) => command
+    .setName("자동")
+    .setDescription("자동으로 번호를 생성한 로또를 구매합니다."))
     .addSubcommand((command) => command
     .setName("수동")
     .setDescription("로또 번호를 직접 입력한 후 구매합니다.")
@@ -110,10 +116,14 @@ async function 당첨확인(interaction) {
         }
         const drwInfos = {};
         const currentDrwNo = (0, lottery_1.getDrwNo)();
-        await Promise.all(Array.from(new Set(userdata.lottery.map((drw) => drw.drwNo).filter((drwNo) => drwNo <= currentDrwNo))).map(async (drwNo) => {
+        await Promise.all(Array.from(new Set(userdata.lottery
+            .map((drw) => drw.drwNo)
+            .filter((drwNo) => drwNo <= currentDrwNo))).map(async (drwNo) => {
             drwInfos[drwNo] = await (0, lottery_1.getDrwInfo)(drwNo, true);
         }));
-        const reply = [`:information_source: ${interaction.member.displayName} 님의 로또 목록입니다.`];
+        const reply = [
+            `:information_source: ${interaction.member.displayName} 님의 로또 목록입니다.`,
+        ];
         const shouldDelete = [];
         await Promise.all(userdata.lottery.map(async (drw, index) => {
             let prefix = "", prize = "";
@@ -165,7 +175,9 @@ async function 당첨확인(interaction) {
             delete userdata.lottery[index];
         }));
         userdata.lottery = userdata.lottery.filter(() => true);
-        await userdata.update([{ key: "lottery", value: JSON.stringify(userdata.lottery) }]);
+        await userdata.update([
+            { key: "lottery", value: JSON.stringify(userdata.lottery) },
+        ]);
         await interaction.editReply(reply.length > 1
             ? reply.join("")
             : (0, types_1.Embed)({

@@ -31,9 +31,18 @@ export interface CorpList {
 
 export class Command {
   data: CommandData;
-  execute: (interaction: ChatInputCommandInteraction, bot: Bot) => Promise<void>;
+  execute: (
+    interaction: ChatInputCommandInteraction,
+    bot: Bot
+  ) => Promise<void>;
 
-  constructor(data: CommandData, execute: (interaction: ChatInputCommandInteraction, bot: Bot) => Promise<void>) {
+  constructor(
+    data: CommandData,
+    execute: (
+      interaction: ChatInputCommandInteraction,
+      bot: Bot
+    ) => Promise<void>
+  ) {
     this.data = data;
     this.execute = execute;
   }
@@ -47,7 +56,10 @@ export class AdminCommand {
   data: AdminCommandData;
   execute: (message: Message, bot: Bot) => Promise<void>;
 
-  constructor(data: AdminCommandData, execute: (message: Message, bot: Bot) => Promise<void>) {
+  constructor(
+    data: AdminCommandData,
+    execute: (message: Message, bot: Bot) => Promise<void>
+  ) {
     this.data = data;
     this.execute = execute;
   }
@@ -80,7 +92,9 @@ export interface EmbedOption {
 export function Embed(option: EmbedOption) {
   const embed = new EmbedBuilder();
   embed.setColor(option.color);
-  embed.setTitle(option.icon ? `:${option.icon}: ${option.title}` : option.title);
+  embed.setTitle(
+    option.icon ? `:${option.icon}: ${option.title}` : option.title
+  );
   embed.setDescription(option.description);
   if (option.image) {
     embed.setImage(option.image);
@@ -94,5 +108,8 @@ export function Embed(option: EmbedOption) {
 }
 
 export function errorLog(err: unknown, caller: string) {
-  appendFileSync("./error.log", `[${new Date().toLocaleString()}] - ${caller}\n${String(err)}\n\n`);
+  appendFileSync(
+    "./error.log",
+    `[${new Date().toLocaleString()}] - ${caller}\n${String(err)}\n\n`
+  );
 }
