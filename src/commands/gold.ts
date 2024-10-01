@@ -96,7 +96,7 @@ async function 확인(interaction: ChatInputCommandInteraction) {
         const prefix = gold.sell.price > userdata.gold.buyPrice ? "+" : "";
         diff = `${prefix}${(gold.sell.price - userdata.gold.buyPrice).toLocaleString("ko-KR")}원 (${prefix}${
           Math.round(
-            (userdata.gold.buyPrice / userdata.gold.amount / gold.sell.price -
+            ((gold.sell.price / userdata.gold.buyPrice) * userdata.gold.amount -
               1) *
               10000 +
               Number.EPSILON
@@ -109,7 +109,7 @@ async function 확인(interaction: ChatInputCommandInteraction) {
         color: "#ffff00",
         icon: "coin",
         title: `${(interaction.member as GuildMember).displayName} 님의 금 보유 현황`,
-        description: `수량: \`${userdata.gold.amount.toLocaleString("ko-KR")}원\`\n평균 구매가: : \`${(
+        description: `수량: \`${userdata.gold.amount.toLocaleString("ko-KR")}개\`\n평균 구매가: \`${(
           Math.round(
             (userdata.gold.buyPrice / userdata.gold.amount + Number.EPSILON) *
               100

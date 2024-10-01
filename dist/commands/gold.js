@@ -68,7 +68,7 @@ async function 확인(interaction) {
             gold = await (0, gold_1.getGoldPrice)();
             if (gold.sell.price !== userdata.gold.buyPrice) {
                 const prefix = gold.sell.price > userdata.gold.buyPrice ? "+" : "";
-                diff = `${prefix}${(gold.sell.price - userdata.gold.buyPrice).toLocaleString("ko-KR")}원 (${prefix}${Math.round((userdata.gold.buyPrice / userdata.gold.amount / gold.sell.price -
+                diff = `${prefix}${(gold.sell.price - userdata.gold.buyPrice).toLocaleString("ko-KR")}원 (${prefix}${Math.round(((gold.sell.price / userdata.gold.buyPrice) * userdata.gold.amount -
                     1) *
                     10000 +
                     Number.EPSILON) / 100}%)`;
@@ -78,7 +78,7 @@ async function 확인(interaction) {
             color: "#ffff00",
             icon: "coin",
             title: `${interaction.member.displayName} 님의 금 보유 현황`,
-            description: `수량: \`${userdata.gold.amount.toLocaleString("ko-KR")}원\`\n평균 구매가: : \`${(Math.round((userdata.gold.buyPrice / userdata.gold.amount + Number.EPSILON) *
+            description: `수량: \`${userdata.gold.amount.toLocaleString("ko-KR")}개\`\n평균 구매가: \`${(Math.round((userdata.gold.buyPrice / userdata.gold.amount + Number.EPSILON) *
                 100) / 100).toLocaleString("ko-KR")}원\`\n수익: \`${diff}\``,
         }));
     }
